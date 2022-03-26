@@ -1,0 +1,7 @@
+*sln
+/.vs
+*/bin
+*/obj
+*/Properties
+*csproj
+*user
