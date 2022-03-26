@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Messenger.Client.src.Forms {
-    public partial class Login : Form {
-        public Login() {
+    public partial class frmHome : Form {
+        public frmHome() {
             InitializeComponent();
         }
     }

@@ -1,6 +1,6 @@
 ﻿
 namespace Messenger.Client.src.Forms {
-    partial class CreateAccount {
+    partial class frmCreateAccount {
         /// <summary>
         /// Required designer variable.
         /// </summary>

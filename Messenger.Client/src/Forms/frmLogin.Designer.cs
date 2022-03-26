@@ -1,6 +1,6 @@
 ﻿
 namespace Messenger.Client.src.Forms {
-    partial class Login {
+    partial class frmLogin {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -84,7 +84,7 @@ namespace Messenger.Client.src.Forms {
             this.label2.TabIndex = 4;
             this.label2.Text = "Password";
             // 
-            // Login
+            // frmLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -95,7 +95,7 @@ namespace Messenger.Client.src.Forms {
             this.Controls.Add(this.btnLogin);
             this.Controls.Add(this.tbUsername);
             this.Controls.Add(this.tbPassword);
-            this.Name = "Login";
+            this.Name = "frmLogin";
             this.Text = "Login";
             this.ResumeLayout(false);
             this.PerformLayout();
