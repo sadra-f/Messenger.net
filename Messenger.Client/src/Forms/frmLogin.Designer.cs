@@ -47,6 +47,7 @@ namespace Messenger.Client.src.Forms {
             this.btnLogin.TabIndex = 1;
             this.btnLogin.Text = "Login";
             this.btnLogin.UseVisualStyleBackColor = true;
+            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
             // 
             // btnCreateAccount
             // 
@@ -98,6 +99,7 @@ namespace Messenger.Client.src.Forms {
             this.Controls.Add(this.tbPassword);
             this.Name = "frmLogin";
             this.Text = "Login";
+            this.Load += new System.EventHandler(this.frmLogin_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

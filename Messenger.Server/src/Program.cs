@@ -46,7 +46,7 @@ namespace Messenger.Server {
                     // An incoming connection needs to be processed.  
                     //while (true) {
                     int bytesRec = handler.Receive(bytes);
-                    data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+                    data += Encoding.UTF8.GetString(bytes, 0, bytesRec);
                     //Thread.Sleep(5000);
                     
                         //if (data.IndexOf("<EOF>") > -1) {
@@ -58,7 +58,7 @@ namespace Messenger.Server {
                     Console.WriteLine($"Text received : {data} [{data.Length}]");
 
                     // Echo the data back to the client.  
-                    byte[] msg = Encoding.ASCII.GetBytes(data);
+                    byte[] msg = Encoding.UTF8.GetBytes(data);
 
                     handler.Send(msg);
                     handler.Shutdown(SocketShutdown.Both);

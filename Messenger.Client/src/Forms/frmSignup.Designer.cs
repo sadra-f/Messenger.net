@@ -1,6 +1,6 @@
 ﻿
 namespace Messenger.Client.src.Forms {
-    partial class frmCreateAccount {
+    partial class frmSignup {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -86,7 +86,7 @@ namespace Messenger.Client.src.Forms {
             this.tbPassword.Size = new System.Drawing.Size(242, 20);
             this.tbPassword.TabIndex = 6;
             // 
-            // frmCreateAccount
+            // frmSignup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -97,8 +97,8 @@ namespace Messenger.Client.src.Forms {
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.tbUsername);
             this.Controls.Add(this.tbPassword);
-            this.Name = "frmCreateAccount";
-            this.Text = "CreateAccount";
+            this.Name = "frmSignup";
+            this.Text = "Signup";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmCreateAccount_FormClosing);
             this.Shown += new System.EventHandler(this.frmCreateAccount_Shown);
             this.ResumeLayout(false);

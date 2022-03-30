@@ -9,24 +9,29 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Messenger.Client.src.Forms {
-    public partial class frmCreateAccount : Form {
+    public partial class frmSignup : Form {
         frmLogin login;
-        public frmCreateAccount(frmLogin login) {
+        public frmSignup(frmLogin login) {
             this.login = login;
             this.Owner = login;
             InitializeComponent();
+            this.CenterToParent();
+        }
+        public frmSignup() {
+            InitializeComponent();
+            this.CenterToParent();
         }
 
         private async void  btnCreateAccount_Click(object sender, EventArgs e) {
-            await ServerConnection.Server.CreateAccount(tbUsername.Text, tbPassword.Text);
+            await Program.SignupReq(tbUsername.Text, tbPassword.Text);//TODOD : move this to program.c and take resopnse model from it
         }
 
         private void frmCreateAccount_Shown(object sender, EventArgs e) {
-            this.login.Hide();
+            //this.login.Hide();//TODO UNComment
         }
 
         private void frmCreateAccount_FormClosing(object sender, FormClosingEventArgs e) {
-            this.login.Show();
+            //this.login.Show();//TODO UNComment
         }
 
         private void btnBack_Click(object sender, EventArgs e) {

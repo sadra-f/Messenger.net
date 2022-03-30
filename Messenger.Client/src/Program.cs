@@ -1,4 +1,7 @@
 ﻿using Messenger.Client.src.Forms;
+using Messenger.Client.src.Models.ConnectionModels;
+using Messenger.Client.src.Models.DBModels.People;
+using Messenger.Client.src.ServerConnection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,71 +21,71 @@ namespace Messenger.Client {
         Application.Run(new frmChat());*/
         public static IPAddress IP = IPAddress.Parse("192.168.1.108");
         public static int PORT = 55000;
+
+        public static MPerson user;
+        public static bool isLoggedIn;
+
         [STAThread]
         static void Main() {
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new frmCreateAccount());
-
-
-            /*byte[] bytes = new byte[1024];
-
-            //// Connect to a remote device.  
-            //try {
-            //    // Establish the remote endpoint for the socket.  
-            //    // This example uses port 11000 on the local computer.  
-            //    IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            //    //IPAddress ipAddress = ipHostInfo.AddressList[0];
-            //    //IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
-            //    IPEndPoint remoteEP = new IPEndPoint(IP, PORT);
-
-            //    // Create a TCP/IP  socket.  
-            //    Socket sender = new Socket(IP.AddressFamily,
-            //        SocketType.Stream, ProtocolType.Tcp);
-
-            //    // Connect the socket to the remote endpoint. Catch any errors.  
-            //    try {
-            //        sender.Connect(remoteEP);
-
-            //        Console.WriteLine("Socket connected to {0}",
-            //            sender.RemoteEndPoint.ToString());
-
-            //        // Encode the data string into a byte array.  
-            //        byte[] msg = Encoding.ASCII.GetBytes("This is a test<EOF>");
-
-            //        // Send the data through the socket.  
-            //        int bytesSent = sender.Send(msg);
-
-            //        // Receive the response from the remote device.  
-            //        int bytesRec = sender.Receive(bytes);
-            //        Console.WriteLine("Echoed test = {0}",
-            //            Encoding.ASCII.GetString(bytes, 0, bytesRec));
-
-            //        // Release the socket.  
-            //        sender.Shutdown(SocketShutdown.Both);
-            //        sender.Close();
-            //        Console.Read();
-
-            //    }
-            //    catch (ArgumentNullException ane) {
-            //        Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-            //    }
-            //    catch (SocketException se) {
-            //        Console.WriteLine("SocketException : {0}", se.ToString());
-            //    }
-            //    catch (Exception e) {
-            //        Console.WriteLine("Unexpected exception : {0}", e.ToString());
-            //    }
-
-            //}
-            //catch (Exception e) {
-            //    Console.WriteLine(e.ToString());
-            //}*/
+            Application.Run(new frmLogin());
+            isLoggedIn = false;
+            user = null;
         }
 
         public static void show(string value) {
             MessageBox.Show(value);
+        }
+
+        public async static Task<MLoginResponse> LoginReq(string username, string pass) {
+            string resp = await Server.Login(new MUser(username, pass));
+            var separted = resp.Split(' ');
+            var res = new MLoginResponse();
+            res.options = ExtractOptions(resp);
+            res.result = res.options["result"];
+            if(res.result.ToLower() == "connected") {
+                res.resultType = EResultType.SUCCESS;
+                res.user = new MPerson(int.Parse(res.options["id"]), username, pass);
+                Program.user = new MPerson(res.user);
+                isLoggedIn = true;
+            }
+            else if(res.result.ToLower() == "error") {
+                res.resultType = EResultType.FAIL;
+                res.user = null;
+            }
+            return res;
+        }
+        
+        public async static Task<MSignupResponse> SignupReq(string username, string pass) {
+            string resp = await Server.Signup(new MUser(username, pass));
+            var separted = resp.Split(' ');
+            var res = new MSignupResponse();
+            res.options = ExtractOptions(resp);
+            res.result = res.options["result"];
+            if (res.result.ToLower() == "user accepted") {
+                res.resultType = EResultType.SUCCESS;                
+            }
+            else if (res.result.ToLower() == "user not accepted") {
+                res.resultType = EResultType.FAIL;
+            }
+            return res;
+        }
+
+        public static Dictionary<string, string> ExtractOptions(string response) {
+            var res = new Dictionary<string, string>();
+            response = response.Replace("\0", String.Empty);
+            string[] separated = response.Split(new string[] {"-Option"},StringSplitOptions.None);
+            res.Add("result", separated[0]);
+            foreach(string str in separated) {
+                if (str.Trim().StartsWith("<")) {
+                    string key = str.Trim().Substring(1, str.Trim().IndexOf(":"));
+                    string value = str.Trim().Substring(str.Trim().IndexOf(":") + 1, str.Trim().LastIndexOf(">") - (str.Trim().IndexOf(":") + 1));
+                    res.Add(key.Trim(), value.Trim());
+                }
+            }
+            return res;
         }
     }
 }
