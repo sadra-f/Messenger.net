@@ -60,6 +60,7 @@ namespace Messenger.Client.src.Forms {
             this.btnCreateAccount.TabIndex = 8;
             this.btnCreateAccount.Text = "Create Account";
             this.btnCreateAccount.UseVisualStyleBackColor = true;
+            this.btnCreateAccount.Click += new System.EventHandler(this.btnCreateAccount_Click);
             // 
             // btnBack
             // 
@@ -69,6 +70,7 @@ namespace Messenger.Client.src.Forms {
             this.btnBack.TabIndex = 7;
             this.btnBack.Text = "Back";
             this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // tbUsername
             // 
@@ -84,7 +86,7 @@ namespace Messenger.Client.src.Forms {
             this.tbPassword.Size = new System.Drawing.Size(242, 20);
             this.tbPassword.TabIndex = 6;
             // 
-            // CreateAccount
+            // frmCreateAccount
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -95,8 +97,10 @@ namespace Messenger.Client.src.Forms {
             this.Controls.Add(this.btnBack);
             this.Controls.Add(this.tbUsername);
             this.Controls.Add(this.tbPassword);
-            this.Name = "CreateAccount";
+            this.Name = "frmCreateAccount";
             this.Text = "CreateAccount";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmCreateAccount_FormClosing);
+            this.Shown += new System.EventHandler(this.frmCreateAccount_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -13,5 +13,9 @@ namespace Messenger.Client.src.Forms {
         public frmLogin() {
             InitializeComponent();
         }
+
+        private void btnCreateAccount_Click(object sender, EventArgs e) {
+            new frmCreateAccount(this).Show();
+        }
     }
 }

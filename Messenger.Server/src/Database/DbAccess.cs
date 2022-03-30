@@ -44,8 +44,21 @@ namespace Messenger.Server.src.Database {
         }
 
         public static ActionResult PostPerson(Models.People.MPerson person) {
-            
-            return ActionResult.FAIL;
+            try {
+                SqlCommand command = new SqlCommand($"INSERT INTO Pepole.Person value ({person.Username}, {person.Pass})");
+                if(command.ExecuteNonQuery() > 0) {
+                    return ActionResult.SUCCESS;
+                }
+                return ActionResult.FAIL;
+            }catch(Exception e) {
+                Program.WriteLog(e.Message);
+                return ActionResult.FAIL;
+            }
+        }
+
+        
+        ~DbAccess() {
+            sqlConnection.Close();
         }
     }
 }

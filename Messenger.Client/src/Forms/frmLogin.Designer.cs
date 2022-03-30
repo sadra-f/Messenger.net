@@ -56,6 +56,7 @@ namespace Messenger.Client.src.Forms {
             this.btnCreateAccount.TabIndex = 2;
             this.btnCreateAccount.Text = "Create Account";
             this.btnCreateAccount.UseVisualStyleBackColor = true;
+            this.btnCreateAccount.Click += new System.EventHandler(this.btnCreateAccount_Click);
             // 
             // tbUsername
             // 

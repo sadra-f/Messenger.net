@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Messenger.Server {
     class Program {
@@ -42,15 +43,16 @@ namespace Messenger.Server {
                     // Program is suspended while waiting for an incoming connection.  
                     Socket handler = listener.Accept();
                     data = null;
-
                     // An incoming connection needs to be processed.  
-                    while (true) {
-                        int bytesRec = handler.Receive(bytes);
-                        data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
-                        if (data.IndexOf("<EOF>") > -1) {
-                            break;
-                        }
-                    }
+                    //while (true) {
+                    int bytesRec = handler.Receive(bytes);
+                    data += Encoding.ASCII.GetString(bytes, 0, bytesRec);
+                    //Thread.Sleep(5000);
+                    
+                        //if (data.IndexOf("<EOF>") > -1) {
+                        //    break;
+                        //}
+                    //}
 
                     // Show the data on the console.  
                     Console.WriteLine($"Text received : {data} [{data.Length}]");
@@ -71,6 +73,11 @@ namespace Messenger.Server {
             Console.WriteLine("\nPress ENTER to continue...");
             Console.Read();
 
+        }
+        public static void WriteLog(string logTxt) {
+            DateTime time = DateTime.Now;
+            //add logTxt to queue and that another thread writes
+            //also attach time to it
         }
     }
 }

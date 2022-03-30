@@ -20,59 +20,69 @@ namespace Messenger.Client {
         public static int PORT = 55000;
         [STAThread]
         static void Main() {
-            byte[] bytes = new byte[1024];
 
-            // Connect to a remote device.  
-            try {
-                // Establish the remote endpoint for the socket.  
-                // This example uses port 11000 on the local computer.  
-                IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-                //IPAddress ipAddress = ipHostInfo.AddressList[0];
-                //IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
-                IPEndPoint remoteEP = new IPEndPoint(IP, PORT);
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new frmCreateAccount());
 
-                // Create a TCP/IP  socket.  
-                Socket sender = new Socket(IP.AddressFamily,
-                    SocketType.Stream, ProtocolType.Tcp);
 
-                // Connect the socket to the remote endpoint. Catch any errors.  
-                try {
-                    sender.Connect(remoteEP);
+            /*byte[] bytes = new byte[1024];
 
-                    Console.WriteLine("Socket connected to {0}",
-                        sender.RemoteEndPoint.ToString());
+            //// Connect to a remote device.  
+            //try {
+            //    // Establish the remote endpoint for the socket.  
+            //    // This example uses port 11000 on the local computer.  
+            //    IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
+            //    //IPAddress ipAddress = ipHostInfo.AddressList[0];
+            //    //IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
+            //    IPEndPoint remoteEP = new IPEndPoint(IP, PORT);
 
-                    // Encode the data string into a byte array.  
-                    byte[] msg = Encoding.ASCII.GetBytes("This is a test<EOF>");
+            //    // Create a TCP/IP  socket.  
+            //    Socket sender = new Socket(IP.AddressFamily,
+            //        SocketType.Stream, ProtocolType.Tcp);
 
-                    // Send the data through the socket.  
-                    int bytesSent = sender.Send(msg);
+            //    // Connect the socket to the remote endpoint. Catch any errors.  
+            //    try {
+            //        sender.Connect(remoteEP);
 
-                    // Receive the response from the remote device.  
-                    int bytesRec = sender.Receive(bytes);
-                    Console.WriteLine("Echoed test = {0}",
-                        Encoding.ASCII.GetString(bytes, 0, bytesRec));
+            //        Console.WriteLine("Socket connected to {0}",
+            //            sender.RemoteEndPoint.ToString());
 
-                    // Release the socket.  
-                    sender.Shutdown(SocketShutdown.Both);
-                    sender.Close();
-                    Console.Read();
+            //        // Encode the data string into a byte array.  
+            //        byte[] msg = Encoding.ASCII.GetBytes("This is a test<EOF>");
 
-                }
-                catch (ArgumentNullException ane) {
-                    Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
-                }
-                catch (SocketException se) {
-                    Console.WriteLine("SocketException : {0}", se.ToString());
-                }
-                catch (Exception e) {
-                    Console.WriteLine("Unexpected exception : {0}", e.ToString());
-                }
+            //        // Send the data through the socket.  
+            //        int bytesSent = sender.Send(msg);
 
-            }
-            catch (Exception e) {
-                Console.WriteLine(e.ToString());
-            }
+            //        // Receive the response from the remote device.  
+            //        int bytesRec = sender.Receive(bytes);
+            //        Console.WriteLine("Echoed test = {0}",
+            //            Encoding.ASCII.GetString(bytes, 0, bytesRec));
+
+            //        // Release the socket.  
+            //        sender.Shutdown(SocketShutdown.Both);
+            //        sender.Close();
+            //        Console.Read();
+
+            //    }
+            //    catch (ArgumentNullException ane) {
+            //        Console.WriteLine("ArgumentNullException : {0}", ane.ToString());
+            //    }
+            //    catch (SocketException se) {
+            //        Console.WriteLine("SocketException : {0}", se.ToString());
+            //    }
+            //    catch (Exception e) {
+            //        Console.WriteLine("Unexpected exception : {0}", e.ToString());
+            //    }
+
+            //}
+            //catch (Exception e) {
+            //    Console.WriteLine(e.ToString());
+            //}*/
+        }
+
+        public static void show(string value) {
+            MessageBox.Show(value);
         }
     }
 }
