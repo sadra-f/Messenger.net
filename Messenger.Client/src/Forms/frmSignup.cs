@@ -23,6 +23,16 @@ namespace Messenger.Client.src.Forms {
         }
 
         private async void  btnCreateAccount_Click(object sender, EventArgs e) {
+            if (tbUsername.Text.Length < 1 || tbPassword.Text.Length < 1) {
+                System.Media.SystemSounds.Asterisk.Play();
+                if (tbUsername.Text.Length < 1) {
+                    tbUsername.Focus();
+                }
+                else {
+                    tbPassword.Focus();
+                }
+                return;
+            }
             await Program.SignupReq(tbUsername.Text, tbPassword.Text);//TODOD : move this to program.c and take resopnse model from it
         }
 

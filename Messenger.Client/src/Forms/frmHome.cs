@@ -13,5 +13,11 @@ namespace Messenger.Client.src.Forms {
         public frmHome() {
             InitializeComponent();
         }
+
+        private void btnNewChat_Click(object sender, EventArgs e) {
+            this.Hide();
+            new frmNewContact(this).ShowDialog();
+            this.Show();
+        }
     }
 }

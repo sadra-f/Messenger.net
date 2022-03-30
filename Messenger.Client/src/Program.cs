@@ -41,10 +41,11 @@ namespace Messenger.Client {
 
         public async static Task<MLoginResponse> LoginReq(string username, string pass) {
             string resp = await Server.Login(new MUser(username, pass));
-            var separted = resp.Split(' ');
             var res = new MLoginResponse();
+
             res.options = ExtractOptions(resp);
             res.result = res.options["result"];
+
             if(res.result.ToLower() == "connected") {
                 res.resultType = EResultType.SUCCESS;
                 res.user = new MPerson(int.Parse(res.options["id"]), username, pass);
@@ -60,10 +61,11 @@ namespace Messenger.Client {
         
         public async static Task<MSignupResponse> SignupReq(string username, string pass) {
             string resp = await Server.Signup(new MUser(username, pass));
-            var separted = resp.Split(' ');
             var res = new MSignupResponse();
+
             res.options = ExtractOptions(resp);
             res.result = res.options["result"];
+
             if (res.result.ToLower() == "user accepted") {
                 res.resultType = EResultType.SUCCESS;                
             }
@@ -72,6 +74,28 @@ namespace Messenger.Client {
             }
             return res;
         }
+
+        public async static Task NewContactReq(string username, string message) {
+            string resp = await Server.NewContact(new MPrivateMessage(username, message));
+            var res = new MSignupResponse();
+
+            //TODO : have server answer this req and uncomment
+            //res.options = ExtractOptions(resp);
+            //res.result = res.options["result"];
+
+            //if (res.result.ToLower() == "user accepted") {
+            //    res.resultType = EResultType.SUCCESS;
+            //}
+            //else if (res.result.ToLower() == "user not accepted") {
+            //    res.resultType = EResultType.FAIL;
+            //}
+            //return res;
+        }
+
+
+
+
+
 
         public static Dictionary<string, string> ExtractOptions(string response) {
             var res = new Dictionary<string, string>();

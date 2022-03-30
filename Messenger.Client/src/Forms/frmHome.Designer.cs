@@ -26,11 +26,11 @@ namespace Messenger.Client.src.Forms {
         private void InitializeComponent() {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblUsername = new System.Windows.Forms.Label();
             this.btnNewChat = new System.Windows.Forms.Button();
             this.btnChat = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.listBox1 = new System.Windows.Forms.ListBox();
-            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -61,7 +61,7 @@ namespace Messenger.Client.src.Forms {
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.label1);
+            this.panel1.Controls.Add(this.lblUsername);
             this.panel1.Controls.Add(this.btnNewChat);
             this.panel1.Controls.Add(this.btnChat);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -69,6 +69,15 @@ namespace Messenger.Client.src.Forms {
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(800, 36);
             this.panel1.TabIndex = 2;
+            // 
+            // lblUsername
+            // 
+            this.lblUsername.AutoSize = true;
+            this.lblUsername.Location = new System.Drawing.Point(13, 12);
+            this.lblUsername.Name = "lblUsername";
+            this.lblUsername.Size = new System.Drawing.Size(86, 13);
+            this.lblUsername.TabIndex = 4;
+            this.lblUsername.Text = "Hello : username";
             // 
             // btnNewChat
             // 
@@ -79,6 +88,7 @@ namespace Messenger.Client.src.Forms {
             this.btnNewChat.TabIndex = 2;
             this.btnNewChat.Text = "New Chat";
             this.btnNewChat.UseVisualStyleBackColor = true;
+            this.btnNewChat.Click += new System.EventHandler(this.btnNewChat_Click);
             // 
             // btnChat
             // 
@@ -108,15 +118,6 @@ namespace Messenger.Client.src.Forms {
             this.listBox1.Size = new System.Drawing.Size(800, 413);
             this.listBox1.TabIndex = 0;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 12);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "label1";
-            // 
             // frmHome
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -144,6 +145,6 @@ namespace Messenger.Client.src.Forms {
         private System.Windows.Forms.Button btnChat;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblUsername;
     }
 }

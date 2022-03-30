@@ -13,13 +13,16 @@ namespace Messenger.Client.src.ServerConnection {
         public static readonly int PORT = 55000;
         public static int BUFFER_SIZE = 1024;
 
-        private static async Task<byte[]> MakeRequest(string req) {
+        private static async Task<byte[]> MakeRequest(string req, bool waitForResp = true) {
             Socket socket = new Socket(IP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             socket.Connect(new IPEndPoint(IP, PORT));
             socket.Send(Encoding.UTF8.GetBytes(req));
-            byte[] res = new byte[BUFFER_SIZE];
-            ArraySegment<byte> res2 = new ArraySegment<byte>(res);
-            await socket.ReceiveAsync(res2, SocketFlags.None);
+            ArraySegment<byte> res2 = new ArraySegment<byte>();
+            if (waitForResp) {
+                byte[] res = new byte[BUFFER_SIZE];
+                res2 = new ArraySegment<byte>(res);
+                await socket.ReceiveAsync(res2, SocketFlags.None);
+            }
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
             return res2.Array;
@@ -48,10 +51,12 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
-        public static async Task<string> NewContact(MUser user) {
-            string request = $"Connect -Option <user:{user.Username}> -Option <pass:{user.Pass}>";
+        public static async Task<string> NewContact(MPrivateMessage message) {
+            string request = $"Pm -Option <Len:{message.Message.Length}> -Option <from:{Program.user.Username}> " +
+                $"-Option <to:{message.To}> -Option <body:{message.Message}>";
             try {
-                return Encoding.UTF8.GetString((await MakeRequest(request)) ?? new byte[BUFFER_SIZE]);
+                //TODO : send response for the req from server
+                return Encoding.UTF8.GetString((await MakeRequest(request, false)) ?? new byte[BUFFER_SIZE]);
             }
             catch (Exception e) {
                 Program.show(e.Message);
