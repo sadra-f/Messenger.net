@@ -40,7 +40,7 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
-        public static async Task<string> Login(MUser user) {
+        public static async Task<string> Login(MUser user) { 
             string request = $"Connect -Option <user:{user.Username}> -Option <pass:{user.Pass}>";
             try {
                 return Encoding.UTF8.GetString((await MakeRequest(request)) ?? new byte[BUFFER_SIZE]);
