@@ -33,7 +33,16 @@ namespace Messenger.Client.src.Forms {
                 }
                 return;
             }
-            await Program.SignupReq(tbUsername.Text, tbPassword.Text);//TODOD : move this to program.c and take resopnse model from it
+            var response = await Program.SignupReq(tbUsername.Text, tbPassword.Text);
+            if(response.resultType == Models.ConnectionModels.EResultType.SUCCESS) {
+                System.Media.SystemSounds.Beep.Play();
+                MessageBox.Show(this, $"A new Account Has Been Created Under the username {tbUsername.Text}", 
+                    "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }else {
+                MessageBox.Show(this, $"Failed To Create New Account under The Username : {tbUsername.Text}",
+                    "Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return;
         }
 
         private void frmCreateAccount_Shown(object sender, EventArgs e) {

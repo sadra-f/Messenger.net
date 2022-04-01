@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Messenger.Client.src.Models.DBModels.People {
-    class MPerson {
+    public class MPerson {
         private int _ID;
         private string _Username;
         private string _Pass;

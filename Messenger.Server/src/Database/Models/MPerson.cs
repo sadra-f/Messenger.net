@@ -12,6 +12,11 @@ namespace Messenger.Server.src.Database.Models.People {
         private DateTime _CreatedAt;
         private DateTime _UpdatedAt;
 
+        public MPerson(string username, string pass) {
+            Username = username;
+            Pass = pass;
+        }
+
         public MPerson() {
         }
 

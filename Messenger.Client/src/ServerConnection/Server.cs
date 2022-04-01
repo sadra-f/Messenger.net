@@ -52,7 +52,7 @@ namespace Messenger.Client.src.ServerConnection {
         }
 
         public static async Task<string> NewContact(MPrivateMessage message) {
-            string request = $"Pm -Option <Len:{message.Message.Length}> -Option <from:{Program.user.Username}> " +
+            string request = $"Pm -Option <len:{message.Message.Length}> -Option <from:{Program.user.Username}> " +
                 $"-Option <to:{message.To}> -Option <body:{message.Message}>";
             try {
                 //TODO : send response for the req from server
@@ -64,6 +64,18 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
+        public static async Task<string> PMessage(MPrivateMessage message) {
+            string request = $"Pm -Option <len:{message.Message.Length}> -Option <from:{Program.user.Username}> " +
+                $"-Option <to:{message.To}> -Option <body:{message.Message}>";
+            try {
+                
+                return Encoding.UTF8.GetString((await MakeRequest(request, false)) ?? new byte[BUFFER_SIZE]);
+            }
+            catch (Exception e) {
+                Program.show(e.Message);
+                return "";
+            }
+        }
 
     }
 }

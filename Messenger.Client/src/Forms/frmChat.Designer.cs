@@ -29,10 +29,10 @@ namespace Messenger.Client.src.Forms {
             this.label1 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.lbChat = new System.Windows.Forms.ListBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnSend = new System.Windows.Forms.Button();
             this.tbMessage = new System.Windows.Forms.TextBox();
-            this.lbChat = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -109,6 +109,15 @@ namespace Messenger.Client.src.Forms {
             this.panel2.Size = new System.Drawing.Size(679, 356);
             this.panel2.TabIndex = 0;
             // 
+            // lbChat
+            // 
+            this.lbChat.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbChat.FormattingEnabled = true;
+            this.lbChat.Location = new System.Drawing.Point(0, 0);
+            this.lbChat.Name = "lbChat";
+            this.lbChat.Size = new System.Drawing.Size(679, 356);
+            this.lbChat.TabIndex = 0;
+            // 
             // panel1
             // 
             this.panel1.Controls.Add(this.btnSend);
@@ -127,6 +136,7 @@ namespace Messenger.Client.src.Forms {
             this.btnSend.TabIndex = 1;
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
+            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
             // tbMessage
             // 
@@ -135,15 +145,6 @@ namespace Messenger.Client.src.Forms {
             this.tbMessage.Name = "tbMessage";
             this.tbMessage.Size = new System.Drawing.Size(568, 20);
             this.tbMessage.TabIndex = 0;
-            // 
-            // lbChat
-            // 
-            this.lbChat.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbChat.FormattingEnabled = true;
-            this.lbChat.Location = new System.Drawing.Point(0, 0);
-            this.lbChat.Name = "lbChat";
-            this.lbChat.Size = new System.Drawing.Size(679, 356);
-            this.lbChat.TabIndex = 0;
             // 
             // frmChat
             // 

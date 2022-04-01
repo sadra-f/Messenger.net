@@ -1,4 +1,5 @@
 ﻿using Messenger.Client.src.Models.ConnectionModels;
+using Messenger.Client.src.Models.DBModels.People;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -13,6 +14,9 @@ namespace Messenger.Client.src.Forms {
     public partial class frmLogin : Form {
         public frmLogin() {
             InitializeComponent();
+            this.tbUsername.Text = "sadra";
+            this.tbPassword.Text = "01234567";
+            this.btnLogin.Focus();
         }
 
         private void btnCreateAccount_Click(object sender, EventArgs e) {
@@ -38,12 +42,15 @@ namespace Messenger.Client.src.Forms {
             }
             MLoginResponse response = await Program.LoginReq(this.tbUsername.Text, this.tbPassword.Text);
             if(response.resultType == EResultType.SUCCESS) {
-                this.Close();
-                new frmHome().Show();
+                this.Hide();
+                Program.currentForm = new frmHome();
+                Program.currentForm.Closed += (s, args) => this.Close();
+                Program.currentForm.Show();
             }
             else{
                 MessageBox.Show(this, response.options["reason"], "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
     }
 }

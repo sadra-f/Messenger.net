@@ -16,14 +16,15 @@ namespace Messenger.Client {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
-        /*Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-        Application.Run(new frmChat());*/
+
+        public static Form currentForm;
+        public static MPerson user;
+        public static bool isLoggedIn;
+
+
         public static IPAddress IP = IPAddress.Parse("192.168.1.108");
         public static int PORT = 55000;
 
-        public static MPerson user;
-        public static bool isLoggedIn;
 
         [STAThread]
         static void Main() {
@@ -34,6 +35,7 @@ namespace Messenger.Client {
             isLoggedIn = false;
             user = null;
         }
+
 
         public static void show(string value) {
             MessageBox.Show(value);
@@ -46,13 +48,13 @@ namespace Messenger.Client {
             res.options = ExtractOptions(resp);
             res.result = res.options["result"];
 
-            if(res.result.ToLower() == "connected") {
+            if(res.result.ToLower().Trim() == "connected") {
                 res.resultType = EResultType.SUCCESS;
                 res.user = new MPerson(int.Parse(res.options["id"]), username, pass);
                 Program.user = new MPerson(res.user);
                 isLoggedIn = true;
             }
-            else if(res.result.ToLower() == "error") {
+            else if(res.result.ToLower().Trim() == "error") {
                 res.resultType = EResultType.FAIL;
                 res.user = null;
             }
@@ -66,10 +68,10 @@ namespace Messenger.Client {
             res.options = ExtractOptions(resp);
             res.result = res.options["result"];
 
-            if (res.result.ToLower() == "user accepted") {
+            if (res.result.ToLower().Trim() == "user accepted") {
                 res.resultType = EResultType.SUCCESS;                
             }
-            else if (res.result.ToLower() == "user not accepted") {
+            else if (res.result.ToLower().Trim() == "user not accepted") {
                 res.resultType = EResultType.FAIL;
             }
             return res;
@@ -91,6 +93,21 @@ namespace Messenger.Client {
             //}
             //return res;
         }
+        public async static Task<AResponse> PMReq(string to, string message) {
+            string resp = await Server.PMessage(new MPrivateMessage(to, message));
+            var res = new AResponse();
+
+            res.options = ExtractOptions(resp);
+            res.result = res.options["result"];
+
+            if (res.result.ToLower().Trim() == "sent") {
+                res.resultType = EResultType.SUCCESS;
+            }
+            else if (res.result.ToLower().Trim() == "not sent") {
+                res.resultType = EResultType.FAIL;
+            }
+            return res;
+        }
 
 
 
@@ -104,8 +121,8 @@ namespace Messenger.Client {
             res.Add("result", separated[0]);
             foreach(string str in separated) {
                 if (str.Trim().StartsWith("<")) {
-                    string key = str.Trim().Substring(1, str.Trim().IndexOf(":"));
-                    string value = str.Trim().Substring(str.Trim().IndexOf(":") + 1, str.Trim().LastIndexOf(">") - (str.Trim().IndexOf(":") + 1));
+                    string key = (str.Trim().Substring(1, str.Trim().IndexOf(":"))).Replace(":", string.Empty);
+                    string value = (str.Trim().Substring(str.Trim().IndexOf(":") + 1, str.Trim().LastIndexOf(">") - (str.Trim().IndexOf(":") + 1))).Trim();
                     res.Add(key.Trim(), value.Trim());
                 }
             }
