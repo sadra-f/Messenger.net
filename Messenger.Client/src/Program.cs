@@ -83,6 +83,11 @@ namespace Messenger.Client {
             }
                         
         }
+        
+        public async static Task<List<MContactChat>> ContactChatReq(string username) {
+
+
+        }
 
         public async static Task<MSignupResponse> SignupReq(string username, string pass) {
             string resp = await Server.Signup(new MUser(username, pass));
@@ -98,23 +103,6 @@ namespace Messenger.Client {
                 res.resultType = EResultType.FAIL;
             }
             return res;
-        }
-
-        public async static Task NewContactReq(string username, string message) {
-            string resp = await Server.NewContact(new MPrivateMessage(username, message));
-            var res = new MSignupResponse();
-
-            //TODO : have server answer this req and uncomment
-            //res.options = ExtractOptions(resp);
-            //res.result = res.options["result"];
-
-            //if (res.result.ToLower() == "user accepted") {
-            //    res.resultType = EResultType.SUCCESS;
-            //}
-            //else if (res.result.ToLower() == "user not accepted") {
-            //    res.resultType = EResultType.FAIL;
-            //}
-            //return res;
         }
         public async static Task<AResponse> PMReq(string to, string message) {
             string resp = await Server.PMessage(new MPrivateMessage(to, message));

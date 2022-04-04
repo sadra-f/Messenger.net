@@ -73,7 +73,7 @@ namespace Messenger.Server.src.Logic {
                 }
                 if (canSend) {
                     MContactMsg msgMdl = new MContactMsg(contacts.ID, options["body"]);
-                    if(DbAccess.CreateMessage(msgMdl) == ActionResult.SUCCESS) {
+                    if(DbAccess.CreateMessage(msgMdl, options["from"]) == ActionResult.SUCCESS) {
                         messageReciver = options["to"];
                         msg = $"Pm\0{options["from"]}\0{options["to"]}\0{options["body"].Length}\0{options["body"]}";
                         return "Sent";

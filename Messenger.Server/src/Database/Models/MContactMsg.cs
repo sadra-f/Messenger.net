@@ -8,6 +8,7 @@ namespace Messenger.Server.src.Database.Models.Messaging {
     class MContactMsg {
         private long _ID;
         private int _ContactID;
+        private int _SenderID;
         private string _Msg;
         private DateTime _CreatedAt;
 
@@ -30,5 +31,6 @@ namespace Messenger.Server.src.Database.Models.Messaging {
         public int ContactID { get => _ContactID; set => _ContactID = value; }
         public string Msg { get => _Msg; set => _Msg = value; }
         public DateTime CreatedAt { get => _CreatedAt; set => _CreatedAt = value; }
+        public int SenderID { get => _SenderID; set => _SenderID = value; }
     }
 }

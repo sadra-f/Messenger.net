@@ -51,12 +51,21 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
-        public static async Task<string> NewContact(MPrivateMessage message) {
-            string request = $"Pm -Option <len:{message.Message.Length}> -Option <from:{Program.user.Username}> " +
-                $"-Option <to:{message.To}> -Option <body:{message.Message}>";
+        public static async Task<string> ContactList() {
+            string request = $"Contacts -Option<user:{Program.user.Username}>";
             try {
-                //TODO : send response for the req from server
-                return Encoding.UTF8.GetString((await MakeRequest(request, false)) ?? new byte[BUFFER_SIZE]);
+                return Encoding.UTF8.GetString((await MakeRequest(request)) ?? new byte[BUFFER_SIZE]);
+            }
+            catch (Exception e) {
+                Program.show(e.Message);
+                return "";
+            }
+        }
+
+        public static async Task<string> ContactChats(string username) {
+            string request = $"Contacts -Option<user:{Program.user.Username}>";
+            try {
+                return Encoding.UTF8.GetString((await MakeRequest(request)) ?? new byte[BUFFER_SIZE]);
             }
             catch (Exception e) {
                 Program.show(e.Message);
@@ -78,16 +87,6 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
-        public static async Task<string> ContactList() {
-            string request = $"Contacts -Option<user:{Program.user.Username}>";
-            try {
-                return Encoding.UTF8.GetString((await MakeRequest(request)) ?? new byte[BUFFER_SIZE]);
-            }
-            catch (Exception e) {
-                Program.show(e.Message);
-                return "";
-            }
-        }
 
     }
 }
