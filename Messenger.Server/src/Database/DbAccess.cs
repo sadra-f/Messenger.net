@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Messenger.Server.src.Database.Models.Clustering;
+using Messenger.Server.src.Database.Models.Messaging;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -98,13 +100,83 @@ namespace Messenger.Server.src.Database {
                 if (res.Rows.Count == 1) {
                     person.ID = (int)res.Rows[0]["ID"];
                     person.CreatedAt = (DateTime)res.Rows[0]["CreatedAt"];
-                    person.UpdatedAt = (DateTime)res.Rows[0]["UpdatedAt"];
                     return ActionResult.SUCCESS;
                 }
 
                 return ActionResult.FAILURE;
             }
             catch (Exception e){
+                //Program.WriteLog(e.Message);
+                return ActionResult.EXCEPTION;
+            }
+        }
+
+        public static ActionResult ReadContact (string username1, string username2, out MContacts contact) {
+            try {
+                SqlCommand cmnd = new SqlCommand($"Select * from Clustering.Contacts where " +
+                    $"((User1 = (Select ID from People.Person where Username = @username1) AND " +
+                    $"User2 = (Select ID from People.Person where Username = @username2)) " +
+                    $"OR (User1 = (Select ID from People.Person where Username = @username2) AND " +
+                    $"User2 = (Select ID from People.Person where Username = @username1)))");
+
+                cmnd.Parameters.Add(new SqlParameter("@username1", username1));
+                cmnd.Parameters.Add(new SqlParameter("@username2", username2));
+
+                DataTable res = ((DataTable)Execute(cmnd, QueryType.READ_SCALAR));
+                if (res.Rows.Count > 0) {
+                    contact = new MContacts();
+                    contact.ID = (int)res.Rows[0]["ID"];
+                    contact.User1 = (int)res.Rows[0]["User1"];
+                    contact.User2 = (int)res.Rows[0]["User2"];
+                    contact.CreatedAt = (DateTime)res.Rows[0]["CreatedAt"];
+                    return ActionResult.SUCCESS;
+                }
+                contact = null;
+                return ActionResult.SUCCESS;
+            }
+            catch (Exception e) {
+                contact = null;
+                //Program.WriteLog(e.Message);
+                return ActionResult.EXCEPTION;
+            }
+        }
+
+        public static ActionResult CreateContact(string username1, string username2) {
+            try {
+                SqlCommand cmnd = new SqlCommand($"INSERT INTO Clustering.Contacts (User1, User2) values ( " +
+                    $"(Select ID from People.Person where ID = @username1)," +
+                    $"(Select ID from People.Person where ID = @username2))");
+
+                cmnd.Parameters.Add(new SqlParameter("@username1", username1));
+                cmnd.Parameters.Add(new SqlParameter("@username2", username2));
+
+                int rows = (int)Execute(cmnd, QueryType.CREATE);
+                if (rows > 0) {
+                    return ActionResult.SUCCESS;
+                }
+                return ActionResult.FAILURE;
+            }
+            catch (Exception e) {
+                //Program.WriteLog(e.Message);
+                return ActionResult.EXCEPTION;
+            }
+        }
+
+        public static ActionResult CreateMessage(MContactMsg msg) {
+            try {
+                SqlCommand cmnd = new SqlCommand($"INSERT INTO Messaging.ContactMsg (ContactID, Msg)" +
+                    $" values (@contactID, @msg)");
+
+                cmnd.Parameters.Add(new SqlParameter("@contactID", msg.ContactID));
+                cmnd.Parameters.Add(new SqlParameter("@msg", msg.Msg));
+
+                int rows = (int)Execute(cmnd, QueryType.CREATE);
+                if (rows > 0) {
+                    return ActionResult.SUCCESS;
+                }
+                return ActionResult.FAILURE;
+            }
+            catch (Exception e) {
                 //Program.WriteLog(e.Message);
                 return ActionResult.EXCEPTION;
             }

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Numerics;
 using Messenger.Server.src.Logic;
 using System.Collections.Concurrent;
+using System.IO;
 
 namespace Messenger.Server {
     public enum ELogType {
@@ -19,12 +20,12 @@ namespace Messenger.Server {
     class Program {
         public static BigInteger ReqCounter = new BigInteger(0);
         public static IPAddress IP = IPAddress.Parse("192.168.1.108");
-        public static int PORT = 55000;
+        public static readonly int PORT = 55000;
 
-        public static ConcurrentDictionary<string, IPEndPoint> onlineUsers;
+        public static ConcurrentDictionary<string, MUserEndpoint> onlineUsers;
 
         static void Main(string[] args) {
-            onlineUsers = new ConcurrentDictionary<string, IPEndPoint>();
+            onlineUsers = new ConcurrentDictionary<string, MUserEndpoint>();
             // Data buffer for incoming data.
 
             // Establish the local endpoint for the socket.  
@@ -59,7 +60,7 @@ namespace Messenger.Server {
 
             }
             catch (Exception e) {
-                Console.WriteLine(e.ToString());
+                WriteLog(e.ToString(), -1, ELogType.ERROR);
             }
 
             Console.WriteLine("\nPress ENTER to continue...");
@@ -71,12 +72,15 @@ namespace Messenger.Server {
             Socket respSocket = (Socket)socket;
             byte[] bytes = new byte[1024];
             int bytesRec = respSocket.Receive(bytes);
-            string reqTxt = Encoding.UTF8.GetString(bytes).Replace("\0", string.Empty);;
+            string reqTxt = Encoding.UTF8.GetString(bytes).Replace("\0", string.Empty);
 
             Program.WriteLog($"[REQUEST] Req Number ({reqNum}) : [{reqTxt.Length}]{reqTxt} from : {'{'}" +
-                $"{((IPEndPoint)respSocket.RemoteEndPoint).Address.ToString() + ":" +((IPEndPoint)respSocket.RemoteEndPoint).Port}{'}'}", reqNum, ELogType.INFO);
+                $"{((IPEndPoint)respSocket.RemoteEndPoint).Address} : " +
+                $"{ ((IPEndPoint)respSocket.RemoteEndPoint).Port}{'}'}", reqNum, ELogType.INFO);
 
             string response = null;
+            try {
+
             switch (reqTxt.Split(' ')[0]) {
                 case "Make":
                     response = ReqHandler.Signup(reqTxt, reqNum);
@@ -84,11 +88,18 @@ namespace Messenger.Server {
                 case "Connect":
                     bool addOnline = false;
                     string onlineUser = null;
-                    response = ReqHandler.Login(reqTxt, reqNum, out addOnline, out onlineUser);
-                    if (addOnline) onlineUsers.TryAdd(onlineUser, ((IPEndPoint)respSocket.RemoteEndPoint));
+                    int userPort = -1;
+                    response = ReqHandler.Login(reqTxt, reqNum, out addOnline, out onlineUser, out userPort);
+                    if (addOnline) onlineUsers.TryAdd(onlineUser, new MUserEndpoint((IPEndPoint)respSocket.RemoteEndPoint, userPort));
                     break;
                 case "Pm":
-                    response = ReqHandler.PrivateMessage(reqTxt, reqNum);
+                    string reciverUsername = null;
+                    string msg = null;
+                    
+                    response = ReqHandler.PrivateMessage(reqTxt, reqNum, out reciverUsername, out msg);
+                    if (onlineUsers.Keys.Contains(reciverUsername)) {
+                        SendMessage(onlineUsers[reciverUsername], msg, reqNum);
+                    }
                     break;
                 case "4":
                     break;
@@ -102,17 +113,45 @@ namespace Messenger.Server {
                     break;
 
             }
+            respSocket.SendTimeout = 1000;
             respSocket.Send(Encoding.UTF8.GetBytes(response));
             Program.WriteLog($"[RESPONSE] Req Number ({reqNum}) : [{response.Length}]{response} To : {'{'}" +
-            $"{((IPEndPoint)respSocket.RemoteEndPoint).Address.ToString() + ":" + ((IPEndPoint)respSocket.RemoteEndPoint).Port}{'}'}", reqNum, ELogType.INFO);
+            $"{((IPEndPoint)respSocket.RemoteEndPoint).Address} : " +
+            $"{((IPEndPoint)respSocket.RemoteEndPoint).Port}{'}'}", reqNum, ELogType.INFO);
+
             respSocket.Shutdown(SocketShutdown.Both);
             respSocket.Close();
+            }catch (Exception e) {
+                WriteLog(e.Message, reqNum, ELogType.ERROR);
+            }
         }
+
+        private static void SendMessage(MUserEndpoint userEndpoint, string msg, BigInteger reqNum) {
+            Socket socket = new Socket(IP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            socket.SendTimeout = 1000;
+            try {
+                Program.WriteLog($"[Message] Req Number ({reqNum}) : [{msg.Length}]{msg} to : {'{'}" +
+                $"{userEndpoint.userIp} : { userEndpoint.ListenerPort}{'}'}", reqNum, ELogType.INFO);
+                socket.Connect(userEndpoint.userIp.Address, userEndpoint.ListenerPort);
+                
+                socket.Send(Encoding.UTF8.GetBytes(msg));
+                
+            }catch (Exception e) {
+                WriteLog(e.Message, reqNum, ELogType.ERROR);
+            }
+            finally {
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Close();
+            }
+        }
+
         public static void WriteLog(string logTxt,BigInteger reqNum ,ELogType logType = ELogType.ERROR) {
             DateTime time = DateTime.Now;
             Console.WriteLine($"[{logType}][{time}] : ReqNum ({reqNum}): {logTxt}");
+            File.AppendAllText("C:\\Users\\TOP\\Desktop\\New Text Document.txt", $"[{logType}][{time}] : ReqNum ({reqNum}): {logTxt}\r\n");
             //add logTxt to queue and that another thread writes
             //also attach time to it
         }
+
     }
 }

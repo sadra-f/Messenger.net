@@ -1,4 +1,6 @@
 ﻿using Messenger.Server.src.Database;
+using Messenger.Server.src.Database.Models.Clustering;
+using Messenger.Server.src.Database.Models.Messaging;
 using Messenger.Server.src.Database.Models.People;
 using System;
 using System.Collections.Generic;
@@ -23,32 +25,70 @@ namespace Messenger.Server.src.Logic {
             }
         }
 
-        public static string Login(string req, BigInteger ReqNum, out bool addToOnline, out string username) {
+        public static string Login(string req, BigInteger reqNum, out bool addToOnline, out string username, out int listenPort) {
             try {
                 Dictionary<string, string> options = ExtractOptions(req);
                 var person = new MPerson(options["user"], options["pass"]);
                 addToOnline = false;
                 username = null;
+                listenPort = -1;
                 if (Program.onlineUsers.Keys.Contains(options["user"])) {
                     return $"Error -Option <reason:User Not Found>";
                 }
                 if (DbAccess.ReadLogin(ref person) == ActionResult.SUCCESS) {
                     addToOnline = true;
                     username = options["user"];
+                    listenPort = int.Parse(options["port"]);
                     return $"Connected -Option <id:{person.ID}> -Option<SID:>";
                 }
                 return $"Error -Option <reason:User Not Found>";
             }
             catch (Exception e) {
-                Program.WriteLog(e.Message, ReqNum, ELogType.ERROR);
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
                 addToOnline = false;
                 username = null;
+                listenPort = -1;
                 return $"Error -Option <reason:User Not Found>";
             }
         }
 
-        public static string PrivateMessage(string reqTxt, BigInteger reqNum) {
-            throw new NotImplementedException();
+        public static string PrivateMessage(string req, BigInteger reqNum, out string messageReciver, out string msg) {
+            try {
+                Dictionary<string, string> options = ExtractOptions(req);
+                MContacts contacts = null;
+                messageReciver = null;
+                msg = null;
+                bool canSend = false;
+                if (DbAccess.ReadContact(options["from"], options["to"], out contacts) == ActionResult.SUCCESS) {
+                    if(contacts != null) {
+                        canSend = true;
+                    }
+                    else if (DbAccess.CreateContact(options["from"], options["to"]) == ActionResult.SUCCESS) {
+                        DbAccess.ReadContact(options["from"], options["to"], out contacts);
+                        canSend = true;
+                    }
+                    else {
+                        return "Not Sent";
+                    }
+                }
+                if (canSend) {
+                    MContactMsg msgMdl = new MContactMsg(contacts.ID, options["body"]);
+                    if(DbAccess.CreateMessage(msgMdl) == ActionResult.SUCCESS) {
+                        messageReciver = options["to"];
+                        msg = $"{options["from"]}\0{options["to"]}\0{options["body"].Length}\0{options["body"]}";
+                        return "Sent";
+                    }
+                    return "not Sent";
+                }
+                
+                return $"Error -Option <reason:Failed To Add To DB>";
+            }
+            catch (Exception e) {
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                messageReciver = null;
+                msg = null;
+                return $"Error -Option <reason:Server Error>";
+            }
         }
 
         public static Dictionary<string, string> ExtractOptions(string data) {

@@ -49,6 +49,7 @@ namespace Messenger.Client.src.Forms {
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.IsSplitterFixed = true;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -85,6 +86,7 @@ namespace Messenger.Client.src.Forms {
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.IsSplitterFixed = true;
             this.splitContainer2.Location = new System.Drawing.Point(0, 0);
             this.splitContainer2.Name = "splitContainer2";
             this.splitContainer2.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -141,10 +143,10 @@ namespace Messenger.Client.src.Forms {
             // tbMessage
             // 
             this.tbMessage.Location = new System.Drawing.Point(12, 14);
-            this.tbMessage.Multiline = true;
             this.tbMessage.Name = "tbMessage";
             this.tbMessage.Size = new System.Drawing.Size(568, 20);
             this.tbMessage.TabIndex = 0;
+            this.tbMessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmChat_KeyDown);
             // 
             // frmChat
             // 
@@ -155,6 +157,7 @@ namespace Messenger.Client.src.Forms {
             this.Name = "frmChat";
             this.Text = "Chat";
             this.Load += new System.EventHandler(this.frmChat_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmChat_KeyDown);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

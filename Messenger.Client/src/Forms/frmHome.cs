@@ -25,9 +25,20 @@ namespace Messenger.Client.src.Forms {
         private void frmHome_Load(object sender, EventArgs e) {
             if (Program.isLoggedIn) {
                 this.lblUsername.Text = Program.user.Username;
+                Program.listen();
                 return;
             }
-                this.lblUsername.Text = "**NOT LOGGED IN**";
+            this.lblUsername.Text = "**NOT LOGGED IN**";
+        }
+
+        internal void NewMessage(string from, string msg) {
+            //TODO : fix this s**t
+            this.listBox1.Items.Add(from);
+
+        }
+
+        private void frmHome_FormClosing(object sender, FormClosingEventArgs e) {
+            Program.killListener();
         }
     }
 }

@@ -41,7 +41,7 @@ namespace Messenger.Client.src.ServerConnection {
         }
 
         public static async Task<string> Login(MUser user) { 
-            string request = $"Connect -Option <user:{user.Username}> -Option <pass:{user.Pass}>";
+            string request = $"Connect -Option <user:{user.Username}> -Option <pass:{user.Pass}> -Option<port:{Program.messagePort}>";
             try {
                 return Encoding.UTF8.GetString((await MakeRequest(request)) ?? new byte[BUFFER_SIZE]);
             }
@@ -65,6 +65,7 @@ namespace Messenger.Client.src.ServerConnection {
         }
 
         public static async Task<string> PMessage(MPrivateMessage message) {
+            message.Message = message.Message ?? "hi";
             string request = $"Pm -Option <len:{message.Message.Length}> -Option <from:{Program.user.Username}> " +
                 $"-Option <to:{message.To}> -Option <body:{message.Message}>";
             try {

@@ -14,6 +14,11 @@ namespace Messenger.Server.src.Database.Models.Messaging {
         public MContactMsg() {
         }
 
+        public MContactMsg(int contactID, string msg) {
+            ContactID = contactID;
+            Msg = msg;
+        }
+
         public MContactMsg(long iD, int contactID, string msg, DateTime createdAt) {
             ID = iD;
             ContactID = contactID;
