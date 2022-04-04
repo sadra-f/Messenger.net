@@ -22,23 +22,42 @@ namespace Messenger.Client.src.Forms {
             this.Show();
         }
 
-        private void frmHome_Load(object sender, EventArgs e) {
+        private async void frmHome_Load(object sender, EventArgs e) {
             if (Program.isLoggedIn) {
                 this.lblUsername.Text = Program.user.Username;
-                Program.listen();
+                await Program.ContactsReq();
+                foreach(var contact in Program.contacts) {
+                    lbContacts.Items.Add(contact);
+                }
                 return;
             }
             this.lblUsername.Text = "**NOT LOGGED IN**";
         }
 
+
         internal void NewMessage(string from, string msg) {
-            //TODO : fix this s**t
-            this.listBox1.Items.Add(from);
+            if (lbContacts.Items.Contains(from)) {
+                lbContacts.Items[lbContacts.Items.IndexOf(from)] = lbContacts.Items[lbContacts.Items.IndexOf(from)].ToString() + '*';
+            }
+            else {
+                Program.contacts.Add("from");
+                this.lbContacts.Items.Add(from + '*');
+            }
 
         }
 
         private void frmHome_FormClosing(object sender, FormClosingEventArgs e) {
             Program.killListener();
+        }
+
+        private void listBox1_DoubleClick(object sender, EventArgs e) {
+            this.Hide();
+            if (lbContacts.SelectedItem == null) return;
+            lbContacts.Items[lbContacts.SelectedIndex] = lbContacts.SelectedItem.ToString().Replace("*", string.Empty);
+            Program.currentForm = new frmChat(new Models.DBModels.People.MPerson(-1, lbContacts.SelectedItem.ToString().Replace("*", string.Empty), ""));
+            Program.currentForm.ShowDialog();
+            Program.currentForm = this;
+            this.Show();
         }
     }
 }

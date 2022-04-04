@@ -78,5 +78,16 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
+        public static async Task<string> ContactList() {
+            string request = $"Contacts -Option<user:{Program.user.Username}>";
+            try {
+                return Encoding.UTF8.GetString((await MakeRequest(request)) ?? new byte[BUFFER_SIZE]);
+            }
+            catch (Exception e) {
+                Program.show(e.Message);
+                return "";
+            }
+        }
+
     }
 }

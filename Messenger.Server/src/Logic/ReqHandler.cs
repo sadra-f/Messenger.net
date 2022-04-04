@@ -11,23 +11,23 @@ using System.Threading.Tasks;
 
 namespace Messenger.Server.src.Logic {
     static class ReqHandler {
-        public static string Signup(string req, BigInteger ReqNum) {
+        public static string Signup(string reqTxt, BigInteger reqNum) {
             try {
-                Dictionary<string, string> options = ExtractOptions(req);
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
                 if(DbAccess.PostPerson(new Database.Models.People.MPerson(options["user"], options["pass"])) == ActionResult.SUCCESS) {
                     return $"User Accepted -Option<id:>";
                 }
                 return "User not Accepted -Option<reason:Username Already Exists>";
             }
             catch (Exception e) {
-                Program.WriteLog(e.Message, ReqNum, ELogType.ERROR);
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
                 return "User not Accepted -Option<reason:Failed To Added User to Database>";
             }
         }
 
-        public static string Login(string req, BigInteger reqNum, out bool addToOnline, out string username, out int listenPort) {
+        public static string Login(string reqTxt, BigInteger reqNum, out bool addToOnline, out string username, out int listenPort) {
             try {
-                Dictionary<string, string> options = ExtractOptions(req);
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
                 var person = new MPerson(options["user"], options["pass"]);
                 addToOnline = false;
                 username = null;
@@ -75,7 +75,7 @@ namespace Messenger.Server.src.Logic {
                     MContactMsg msgMdl = new MContactMsg(contacts.ID, options["body"]);
                     if(DbAccess.CreateMessage(msgMdl) == ActionResult.SUCCESS) {
                         messageReciver = options["to"];
-                        msg = $"{options["from"]}\0{options["to"]}\0{options["body"].Length}\0{options["body"]}";
+                        msg = $"Pm\0{options["from"]}\0{options["to"]}\0{options["body"].Length}\0{options["body"]}";
                         return "Sent";
                     }
                     return "not Sent";
@@ -88,6 +88,28 @@ namespace Messenger.Server.src.Logic {
                 messageReciver = null;
                 msg = null;
                 return $"Error -Option <reason:Server Error>";
+            }
+        }
+
+        internal static string Contacts(string reqTxt, BigInteger reqNum) {
+            try {
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
+                List<string> contacts = null;
+                if (DbAccess.ReadContacts(options["user"], out contacts) == ActionResult.SUCCESS) {
+                    StringBuilder strB = new StringBuilder("contacts|");
+                    if(contacts.Count > 0) {
+                        for (int i = 0; i < contacts.Count; i++) {
+                            strB.Append(contacts[i]);
+                            if(i < contacts.Count - 1) strB.Append('|');
+                        }
+                        return strB.ToString();
+                    }
+                }
+                return "None Found";
+            }
+            catch (Exception e) {
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                return "None Found";
             }
         }
 

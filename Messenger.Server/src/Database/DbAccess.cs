@@ -141,6 +141,31 @@ namespace Messenger.Server.src.Database {
             }
         }
 
+        internal static ActionResult ReadContacts(string username, out List<string> contacts) {
+            try {
+                SqlCommand cmnd = new SqlCommand($"Select username from People.Person as person " +
+                    $"inner join((select User1 as userID from Clustering.Contacts where User2=(" +
+                    $"Select ID from People.Person where username = @username))" +
+                    $"Union(select User2 as userID from Clustering.Contacts where User1 = (" +
+                    $"Select ID from People.Person where username = @username))) as tbl " +
+                     $"on person.ID = tbl.userID");
+
+                cmnd.Parameters.Add(new SqlParameter("@username", username));
+                contacts = new List<string>();
+                var rows = (DataTable)Execute(cmnd, QueryType.READ_ALL);
+                foreach(DataRow row in rows.Rows) {
+                    contacts.Add(row["username"].ToString());
+                }
+                return ActionResult.SUCCESS;
+                
+            }
+            catch (Exception e) {
+                //Program.WriteLog(e.Message);
+                contacts = null;
+                return ActionResult.EXCEPTION;
+            }
+        }
+
         public static ActionResult CreateContact(string username1, string username2) {
             try {
                 SqlCommand cmnd = new SqlCommand($"INSERT INTO Clustering.Contacts (User1, User2) values ( " +

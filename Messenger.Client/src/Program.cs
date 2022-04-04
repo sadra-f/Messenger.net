@@ -23,7 +23,8 @@ namespace Messenger.Client {
         public static Form currentForm;
         public static MPerson user;
         public static bool isLoggedIn;
-        //public static ConcurrentDictionary<string, >
+        public static List<string> contacts;
+        public static List<string> groups;
 
         private static Thread listener;
 
@@ -35,12 +36,14 @@ namespace Messenger.Client {
         [STAThread]
         static void Main() {
             listen();
+            contacts = new List<string>();
+            groups = new List<string>();
+            isLoggedIn = false;
+            user = null;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             currentForm = new frmLogin();
             Application.Run(currentForm);
-            isLoggedIn = false;
-            user = null;
         }
 
 
@@ -68,6 +71,19 @@ namespace Messenger.Client {
             return res;
         }
         
+        public async static Task ContactsReq() {
+            string resp = await Server.ContactList();
+            resp = resp.Replace("\0", String.Empty);
+            string[] splitted = resp.Split('|');
+            string res = splitted[0];
+            if(res.Trim().ToLower() == "contacts") {
+                for (int i = 1; i < splitted.Length; i++) {
+                    contacts.Add(splitted[i]);
+                }
+            }
+                        
+        }
+
         public async static Task<MSignupResponse> SignupReq(string username, string pass) {
             string resp = await Server.Signup(new MUser(username, pass));
             var res = new MSignupResponse();
@@ -161,18 +177,18 @@ namespace Messenger.Client {
                     //string reqTxt = Encoding.UTF8.GetString(bytes).Replace("\0", string.Empty);
                     string[] splitted = Encoding.UTF8.GetString(bytes).Split('\0');
                     if (splitted[0] == "KILLYOURSELF") return;
-                    if (splitted[1] != user.Username) continue;
+                    if (splitted[2] != user.Username) continue;
                     if (currentForm is frmChat) {
-                        if (((frmChat)currentForm).EndUser.Username == splitted[0]) {
+                        if (((frmChat)currentForm).EndUser.Username == splitted[1]) {
                             ((frmChat)currentForm).Invoke((MethodInvoker)delegate () {
-                                ((frmChat)currentForm).addMessage(splitted[3]);
+                                ((frmChat)currentForm).addMessage(splitted[4]);
                             });
                         }
                         continue;
                     }
                     else if (currentForm is frmHome) {
                         ((frmHome)currentForm).Invoke((MethodInvoker)delegate () {
-                            ((frmHome)currentForm).NewMessage(splitted[0], splitted[3].Replace("\0", string.Empty));
+                            ((frmHome)currentForm).NewMessage(splitted[1], splitted[4].Replace("\0", string.Empty));
                         });
                     }
                 }

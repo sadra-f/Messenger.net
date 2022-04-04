@@ -101,8 +101,9 @@ namespace Messenger.Server {
                         SendMessage(onlineUsers[reciverUsername], msg, reqNum);
                     }
                     break;
-                case "4":
-                    break;
+                case "Contacts":
+                        response = ReqHandler.Contacts(reqTxt, reqNum);
+                        break;
                 case "5":
                     break;
                 case "6":
