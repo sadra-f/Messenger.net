@@ -91,6 +91,23 @@ namespace Messenger.Server.src.Logic {
             }
         }
 
+        public static string CreateNewGroup(string reqTxt, BigInteger reqNum) {
+            try {
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
+                bool didCreate = false;
+                if (DbAccess.CreateGroup(options["user"], options["name"], options["desc"], out didCreate) == ActionResult.SUCCESS) {
+                    if (didCreate) {
+                        return "Created";
+                    }
+                }
+                return "Not Created -Option<reason:Failed To Add To DB>";
+            }
+            catch (Exception e) {
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                return $"Not Created -Option<reason:{e.Message}>";
+            }
+        }
+
         public static string Contacts(string reqTxt, BigInteger reqNum) {
             try {
                 Dictionary<string, string> options = ExtractOptions(reqTxt);

@@ -64,7 +64,6 @@ namespace Messenger.Server.src.Database {
                 return ActionResult.SUCCESS;
             }
             return ActionResult.FAILURE;
-            
         }
 
         public static ActionResult ReadPersonID( ref int result, string username = null) {
@@ -139,6 +138,23 @@ namespace Messenger.Server.src.Database {
                 //Program.WriteLog(e.Message);
                 return ActionResult.EXCEPTION;
             }
+        }
+
+        internal static ActionResult CreateGroup(string username, string name, string desc, out bool didCreate) {
+            SqlCommand command = new SqlCommand($"INSERT INTO Clustering.Groups (GName, Intro,CreatorID) values (@gname, " +
+                $"@intro, (Select ID from People.Perosn where Username = @username))");
+
+            command.Parameters.Add(new SqlParameter("@username", username));
+            command.Parameters.Add(new SqlParameter("@gname", name));
+            command.Parameters.Add(new SqlParameter("@intro", desc));
+            didCreate = false;
+
+            if ((int)Execute(command, QueryType.CREATE) > 0) {
+                didCreate = true;
+                return ActionResult.SUCCESS;
+            }
+
+            return ActionResult.FAILURE;
         }
 
         public static ActionResult ReadContacts(string username, out List<string> contacts) {
