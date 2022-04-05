@@ -158,7 +158,7 @@ namespace Messenger.Client.src.Forms {
             this.btnNewGroup.TabIndex = 2;
             this.btnNewGroup.Text = "New Group";
             this.btnNewGroup.UseVisualStyleBackColor = true;
-            this.btnNewGroup.Click += new System.EventHandler(this.btnNewChat_Click);
+            this.btnNewGroup.Click += new System.EventHandler(this.btnNewGroup_Click);
             // 
             // label1
             // 

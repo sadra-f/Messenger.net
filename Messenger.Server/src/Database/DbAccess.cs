@@ -142,7 +142,7 @@ namespace Messenger.Server.src.Database {
 
         internal static ActionResult CreateGroup(string username, string name, string desc, out bool didCreate) {
             SqlCommand command = new SqlCommand($"INSERT INTO Clustering.Groups (GName, Intro,CreatorID) values (@gname, " +
-                $"@intro, (Select ID from People.Perosn where Username = @username))");
+                $"@intro, (Select ID from People.Person where Username = @username))");
 
             command.Parameters.Add(new SqlParameter("@username", username));
             command.Parameters.Add(new SqlParameter("@gname", name));

@@ -113,6 +113,7 @@ namespace Messenger.Client {
             res.result = res.options["result"];
 
             if (res.result.ToLower().Trim() == "created") {
+                groups.Add(gpName);
                 res.resultType = EResultType.SUCCESS;
             }
             else if (res.result.ToLower().Trim() == "not created") {

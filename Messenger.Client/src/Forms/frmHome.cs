@@ -67,5 +67,17 @@ namespace Messenger.Client.src.Forms {
             Program.currentForm = this;
             this.Show();
         }
+
+        private void btnNewGroup_Click(object sender, EventArgs e) {
+            this.Hide();
+            var tmpFrm = new frmCreateGroup();
+            Program.currentForm = tmpFrm;
+            tmpFrm.ShowDialog();
+            Program.currentForm = this;
+            if (tmpFrm.didCreate) {
+                this.lbGroups.Items.Add(tmpFrm.name);
+            }
+            this.Show();
+        }
     }
 }

@@ -10,7 +10,11 @@ using System.Windows.Forms;
 
 namespace Messenger.Client.src.Forms {
     public partial class frmCreateGroup : Form {
+        internal bool didCreate;
+        internal string name;
         public frmCreateGroup() {
+            didCreate = false;
+            name = null;
             InitializeComponent();
         }
 
@@ -20,7 +24,19 @@ namespace Messenger.Client.src.Forms {
                 tbGroupName.Focus();
                 return;
             }
-            await Program.CreateGroupReq(tbGroupName.Text, tbGroupDesc.Text);//TODO : continue
+            this.Enabled = false;
+            var res = await Program.CreateGroupReq(tbGroupName.Text, tbGroupDesc.Text);//TODO : continue
+            if(res.resultType == Models.ConnectionModels.EResultType.SUCCESS) {
+                didCreate = true;
+                name = tbGroupName.Text;
+                System.Media.SystemSounds.Beep.Play();
+                this.Close();
+            }
+            else {
+                this.Enabled = true;
+                System.Media.SystemSounds.Asterisk.Play();
+                MessageBox.Show(this, res.options["reason"], "Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
     }
 }
