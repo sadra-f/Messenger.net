@@ -88,7 +88,7 @@ namespace Messenger.Client.src.ServerConnection {
         }
 
         public static async Task<string> CreateGroup(string name, string desc) {
-            string request = $"CreateG -Option<user:{Program.user.Username}> -Option<name:{name}> -Option<desc:{desc}>";
+            string request = $"CreateGp -Option<user:{Program.user.Username}> -Option<name:{name}> -Option<desc:{desc}>";
             try {
 
                 return Encoding.UTF8.GetString((await MakeRequest(request, true)) ?? new byte[BUFFER_SIZE]);

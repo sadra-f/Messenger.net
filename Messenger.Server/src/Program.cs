@@ -72,48 +72,49 @@ namespace Messenger.Server {
             string response = null;
             try {
 
-            switch (reqTxt.Split(' ')[0]) {
-                case "Make":
-                    response = ReqHandler.Signup(reqTxt, reqNum);
-                    break;
-                case "Connect":
-                    bool addOnline = false;
-                    string onlineUser = null;
-                    int userPort = -1;
-                    response = ReqHandler.Login(reqTxt, reqNum, out addOnline, out onlineUser, out userPort);
-                    if (addOnline) onlineUsers.TryAdd(onlineUser, new MUserEndpoint((IPEndPoint)respSocket.RemoteEndPoint, userPort));
-                    break;
-                case "Pm":
-                    string reciverUsername = null;
-                    string msg = null;
+                switch (reqTxt.Split(' ')[0]) {
+                    case "Make":
+                        response = ReqHandler.Signup(reqTxt, reqNum);
+                        break;
+                    case "Connect":
+                        bool addOnline = false;
+                        string onlineUser = null;
+                        int userPort = -1;
+                        response = ReqHandler.Login(reqTxt, reqNum, out addOnline, out onlineUser, out userPort);
+                        if (addOnline) onlineUsers.TryAdd(onlineUser, new MUserEndpoint((IPEndPoint)respSocket.RemoteEndPoint, userPort));
+                        break;
+                    case "Pm":
+                        string reciverUsername = null;
+                        string msg = null;
                     
-                    response = ReqHandler.PrivateMessage(reqTxt, reqNum, out reciverUsername, out msg);
-                    if (onlineUsers.Keys.Contains(reciverUsername)) {
-                        SendMessage(onlineUsers[reciverUsername], msg, reqNum);
-                    }
-                    break;
-                case "Contacts":
+                        response = ReqHandler.PrivateMessage(reqTxt, reqNum, out reciverUsername, out msg);
+                        if (onlineUsers.Keys.Contains(reciverUsername)) {
+                            SendMessage(onlineUsers[reciverUsername], msg, reqNum);
+                        }
+                        break;
+                    case "Contacts":
                         response = ReqHandler.Contacts(reqTxt, reqNum);
                         break;
-                case "ChatList":
+                    case "ChatList":
                         response = ReqHandler.ContactChat(reqTxt, reqNum);
-                    break;
-                case "6":
-                    break;
-                case "7":
-                    break;
-                case "8":
-                    break;
+                        break;
+                    case "CreateGp":
+                        response = ReqHandler.CreateNewGroup(reqTxt, reqNum);
+                        break;
+                    case "7":
+                        break;
+                    case "8":
+                        break;
 
-            }
-            respSocket.SendTimeout = 1000;
-            respSocket.Send(Encoding.UTF8.GetBytes(response));
-            Program.WriteLog($"[RESPONSE] Req Number ({reqNum}) : [{response.Length}]{response} To : {'{'}" +
-            $"{((IPEndPoint)respSocket.RemoteEndPoint).Address} : " +
-            $"{((IPEndPoint)respSocket.RemoteEndPoint).Port}{'}'}", reqNum, ELogType.INFO);
+                }
+                respSocket.SendTimeout = 1000;
+                respSocket.Send(Encoding.UTF8.GetBytes(response));
+                Program.WriteLog($"[RESPONSE] Req Number ({reqNum}) : [{response.Length}]{response} To : {'{'}" +
+                $"{((IPEndPoint)respSocket.RemoteEndPoint).Address} : " +
+                $"{((IPEndPoint)respSocket.RemoteEndPoint).Port}{'}'}", reqNum, ELogType.INFO);
 
-            respSocket.Shutdown(SocketShutdown.Both);
-            respSocket.Close();
+                respSocket.Shutdown(SocketShutdown.Both);
+                respSocket.Close();
             }catch (Exception e) {
                 WriteLog(e.Message, reqNum, ELogType.ERROR);
             }
