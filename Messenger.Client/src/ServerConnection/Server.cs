@@ -87,7 +87,17 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
-        //public static async Task<string> CreateGroup
+        public static async Task<string> CreateGroup() {
+            string request = $"CreateG -Option<user:> -Option<name:> -Option<desc:>";
+            try {
+
+                return Encoding.UTF8.GetString((await MakeRequest(request, true)) ?? new byte[BUFFER_SIZE]);
+            }
+            catch (Exception e) {
+                Program.show(e.Message);
+                return "";
+            }
+        }
 
     }
 }

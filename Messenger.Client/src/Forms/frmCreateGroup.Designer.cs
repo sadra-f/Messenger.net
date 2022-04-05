@@ -24,21 +24,21 @@ namespace Messenger.Client.src.Forms {
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
-            this.tbMessage = new System.Windows.Forms.TextBox();
+            this.tbGroupDesc = new System.Windows.Forms.TextBox();
             this.btnCreate = new System.Windows.Forms.Button();
             this.tbGroupName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // tbMessage
+            // tbGroupDesc
             // 
-            this.tbMessage.Location = new System.Drawing.Point(12, 83);
-            this.tbMessage.MaxLength = 128;
-            this.tbMessage.Multiline = true;
-            this.tbMessage.Name = "tbMessage";
-            this.tbMessage.Size = new System.Drawing.Size(509, 38);
-            this.tbMessage.TabIndex = 11;
+            this.tbGroupDesc.Location = new System.Drawing.Point(12, 83);
+            this.tbGroupDesc.MaxLength = 128;
+            this.tbGroupDesc.Multiline = true;
+            this.tbGroupDesc.Name = "tbGroupDesc";
+            this.tbGroupDesc.Size = new System.Drawing.Size(509, 38);
+            this.tbGroupDesc.TabIndex = 11;
             // 
             // btnCreate
             // 
@@ -82,7 +82,7 @@ namespace Messenger.Client.src.Forms {
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(537, 136);
-            this.Controls.Add(this.tbMessage);
+            this.Controls.Add(this.tbGroupDesc);
             this.Controls.Add(this.btnCreate);
             this.Controls.Add(this.tbGroupName);
             this.Controls.Add(this.label2);
@@ -96,7 +96,7 @@ namespace Messenger.Client.src.Forms {
 
         #endregion
 
-        private System.Windows.Forms.TextBox tbMessage;
+        private System.Windows.Forms.TextBox tbGroupDesc;
         private System.Windows.Forms.Button btnCreate;
         private System.Windows.Forms.TextBox tbGroupName;
         private System.Windows.Forms.Label label2;

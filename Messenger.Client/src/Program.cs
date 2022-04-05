@@ -15,12 +15,19 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Messenger.Client {
+
+    enum LogType {
+        INFO,
+        ERROR,
+    }
+
     static class Program {
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
 
         public static Form currentForm;
+
         public static MPerson user;
         public static bool isLoggedIn;
         public static List<string> contacts;
@@ -47,8 +54,9 @@ namespace Messenger.Client {
         }
 
 
-        public static void show(string value) {
-            MessageBox.Show(value);
+        public static void show(string value, LogType type = LogType.ERROR) {
+            MessageBox.Show(currentForm, value, type.ToString(), MessageBoxButtons.OK,
+                (type == LogType.ERROR ? MessageBoxIcon.Error : MessageBoxIcon.Information));
         }
 
         public async static Task<MLoginResponse> LoginReq(string username, string pass) {
@@ -95,6 +103,23 @@ namespace Messenger.Client {
                 }
             }
             return res;    
+        }
+
+        internal async static Task<AResponse> CreateGroupReq(string gpName, string gpDesc) {
+            string resp = await Server.CreateGroup(gpName, gpDesc);
+            var res = new AResponse();
+
+            res.options = ExtractOptions(resp);
+            res.result = res.options["result"];
+
+            if (res.result.ToLower().Trim() == "created") {
+                res.resultType = EResultType.SUCCESS;
+            }
+            else if (res.result.ToLower().Trim() == "not created") {
+                Program.show(res.options["reason"], LogType.INFO);
+                res.resultType = EResultType.FAIL;
+            }
+            return res;
         }
 
         public async static Task<MSignupResponse> SignupReq(string username, string pass) {

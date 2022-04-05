@@ -20,6 +20,7 @@ namespace Messenger.Client.src.Forms {
                 tbGroupName.Focus();
                 return;
             }
+            //await Program.CreateGroupReq(tbGroupName.Text, tbGroupDesc.Text);
         }
     }
 }
