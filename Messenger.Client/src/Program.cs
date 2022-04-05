@@ -85,8 +85,16 @@ namespace Messenger.Client {
         }
         
         public async static Task<List<MContactChat>> ContactChatReq(string username) {
-
-
+            var resp = await Server.ContactChats(username);
+            Dictionary<string, string> options = ExtractOptions(resp);
+            var res = new List<MContactChat>();
+            if(resp.Split(' ')[0].Trim().ToLower() == "chats") {
+                string[] splittedMsgs = options["msgs"].Split('|');
+                for (int i = 0; i < splittedMsgs.Length; i++) {
+                    res.Add(new MContactChat(splittedMsgs[i].Split(":".ToCharArray(), 2)[0], splittedMsgs[i].Split(":".ToCharArray(), 2)[1]));
+                }
+            }
+            return res;    
         }
 
         public async static Task<MSignupResponse> SignupReq(string username, string pass) {

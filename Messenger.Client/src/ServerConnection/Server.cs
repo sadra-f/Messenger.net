@@ -63,7 +63,7 @@ namespace Messenger.Client.src.ServerConnection {
         }
 
         public static async Task<string> ContactChats(string username) {
-            string request = $"Contacts -Option<user:{Program.user.Username}>";
+            string request = $"ChatList -Option<user1:{Program.user.Username}> -Option<user2:{username}>";
             try {
                 return Encoding.UTF8.GetString((await MakeRequest(request)) ?? new byte[BUFFER_SIZE]);
             }

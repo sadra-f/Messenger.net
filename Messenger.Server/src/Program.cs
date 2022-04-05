@@ -23,6 +23,7 @@ namespace Messenger.Server {
         public static readonly int PORT = 55000;
 
         public static ConcurrentDictionary<string, MUserEndpoint> onlineUsers;
+        public static int ReadMessageCount = 20;
 
         static void Main(string[] args) {
             onlineUsers = new ConcurrentDictionary<string, MUserEndpoint>();
@@ -104,7 +105,8 @@ namespace Messenger.Server {
                 case "Contacts":
                         response = ReqHandler.Contacts(reqTxt, reqNum);
                         break;
-                case "5":
+                case "ChatList":
+                        response = ReqHandler.ContactChat(reqTxt, reqNum);
                     break;
                 case "6":
                     break;

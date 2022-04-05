@@ -14,7 +14,7 @@ namespace Messenger.Server.src.Logic {
         public static string Signup(string reqTxt, BigInteger reqNum) {
             try {
                 Dictionary<string, string> options = ExtractOptions(reqTxt);
-                if(DbAccess.PostPerson(new Database.Models.People.MPerson(options["user"], options["pass"])) == ActionResult.SUCCESS) {
+                if(DbAccess.CreatePerson(new Database.Models.People.MPerson(options["user"], options["pass"])) == ActionResult.SUCCESS) {
                     return $"User Accepted -Option<id:>";
                 }
                 return "User not Accepted -Option<reason:Username Already Exists>";
@@ -91,7 +91,7 @@ namespace Messenger.Server.src.Logic {
             }
         }
 
-        internal static string Contacts(string reqTxt, BigInteger reqNum) {
+        public static string Contacts(string reqTxt, BigInteger reqNum) {
             try {
                 Dictionary<string, string> options = ExtractOptions(reqTxt);
                 List<string> contacts = null;
@@ -103,6 +103,24 @@ namespace Messenger.Server.src.Logic {
                             if(i < contacts.Count - 1) strB.Append('|');
                         }
                         return strB.ToString();
+                    }
+                }
+                return "None Found";
+            }
+            catch (Exception e) {
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                return "None Found";
+            }
+        }
+
+        public static string ContactChat(string reqTxt, BigInteger reqNum) {
+            try {
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
+                MContacts contacts = null;
+                if (DbAccess.ReadContact(options["user1"], options["user2"], out contacts) == ActionResult.SUCCESS) {
+                    string msgs = null;
+                    if (DbAccess.ReadContactMsg(contacts.ID, Program.ReadMessageCount, out msgs) == ActionResult.SUCCESS) {
+                        return $"Chats -Option<user1:{options["user1"]}> -Option<user2:{options["user2"]}> -Option<msgs:{msgs}>";
                     }
                 }
                 return "None Found";

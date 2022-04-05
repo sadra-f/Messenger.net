@@ -56,7 +56,7 @@ namespace Messenger.Server.src.Database {
             }
         }
 
-        public static ActionResult PostPerson(Models.People.MPerson person) {
+        public static ActionResult CreatePerson(Models.People.MPerson person) {
             SqlCommand command = new SqlCommand($"INSERT INTO People.Person (Username, Pass) values (@username, @pass)");
             command.Parameters.Add(new SqlParameter("@username", person.Username));
             command.Parameters.Add(new SqlParameter("@pass", person.Pass));
@@ -141,7 +141,7 @@ namespace Messenger.Server.src.Database {
             }
         }
 
-        internal static ActionResult ReadContacts(string username, out List<string> contacts) {
+        public static ActionResult ReadContacts(string username, out List<string> contacts) {
             try {
                 SqlCommand cmnd = new SqlCommand($"Select username from People.Person as person " +
                     $"inner join((select User1 as userID from Clustering.Contacts where User2=(" +
@@ -166,6 +166,36 @@ namespace Messenger.Server.src.Database {
             }
         }
 
+        public static ActionResult ReadContactMsg(int contactID, int messageCount, out string messages) {
+            try {
+                SqlCommand cmnd = new SqlCommand($"Select Username, Msg from (Select TOP {messageCount} Username, " +
+                    $"Msg, ContactMsg.CreatedAt from Messaging.ContactMsg inner join People.Person on " +
+                    $"Person.ID = ContactMsg.SenderID where ContactID = @contactID " +
+                    $"order by ContactMsg.CreatedAt desc) as tbl order by tbl.CreatedAt");
+
+                cmnd.Parameters.Add(new SqlParameter("@contactID", contactID));
+                var rows = (DataTable)Execute(cmnd, QueryType.READ_ALL);//TODO query is right continue the rest need double string to return the sender and msg
+                StringBuilder strB = new StringBuilder();
+                messages = null;
+                for (int i = 0; i < rows.Rows.Count; i++) {
+                    strB.Append(rows.Rows[i]["Username"].ToString());
+                    strB.Append(':');
+                    strB.Append(rows.Rows[i]["Msg"].ToString());
+                    if (i < rows.Rows.Count - 1) strB.Append('|');
+                }
+                messages = strB.ToString();
+                return ActionResult.SUCCESS;
+
+            }
+            catch (Exception e) {
+                messages = null;
+                //Program.WriteLog(e.Message);
+                return ActionResult.EXCEPTION;
+            }
+
+            //INSERT INTO Messaging.ContactMsg (ContactID, Msg, SenderID) values (1, 'manualTest', (select ID from People.Person where Username='sadra'))
+        }
+
         public static ActionResult CreateContact(string username1, string username2) {
             try {
                 SqlCommand cmnd = new SqlCommand($"INSERT INTO Clustering.Contacts (User1, User2) values ( " +
@@ -187,13 +217,14 @@ namespace Messenger.Server.src.Database {
             }
         }
 
-        public static ActionResult CreateMessage(MContactMsg msg) {
+        public static ActionResult CreateMessage(MContactMsg msg, string senderUsername) {
             try {
-                SqlCommand cmnd = new SqlCommand($"INSERT INTO Messaging.ContactMsg (ContactID, Msg)" +
-                    $" values (@contactID, @msg)");
+                SqlCommand cmnd = new SqlCommand($"INSERT INTO Messaging.ContactMsg (ContactID, Msg, SenderID)" +
+                    $" values (@contactID, @msg, (select ID from People.Person where Username=@username))");
 
                 cmnd.Parameters.Add(new SqlParameter("@contactID", msg.ContactID));
                 cmnd.Parameters.Add(new SqlParameter("@msg", msg.Msg));
+                cmnd.Parameters.Add(new SqlParameter("@username", senderUsername));
 
                 int rows = (int)Execute(cmnd, QueryType.CREATE);
                 if (rows > 0) {

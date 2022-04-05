@@ -51,8 +51,8 @@ namespace Messenger.Client.src.Forms {
         }
 
         private void listBox1_DoubleClick(object sender, EventArgs e) {
-            this.Hide();
             if (lbContacts.SelectedItem == null) return;
+            this.Hide();
             lbContacts.Items[lbContacts.SelectedIndex] = lbContacts.SelectedItem.ToString().Replace("*", string.Empty);
             Program.currentForm = new frmChat(new Models.DBModels.People.MPerson(-1, lbContacts.SelectedItem.ToString().Replace("*", string.Empty), ""));
             Program.currentForm.ShowDialog();

@@ -157,6 +157,7 @@ namespace Messenger.Client.src.Forms {
             this.Name = "frmChat";
             this.Text = "Chat";
             this.Load += new System.EventHandler(this.frmChat_Load);
+            this.Shown += new System.EventHandler(this.frmChat_Shown);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmChat_KeyDown);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
