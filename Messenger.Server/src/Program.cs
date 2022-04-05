@@ -23,36 +23,26 @@ namespace Messenger.Server {
         public static readonly int PORT = 55000;
 
         public static ConcurrentDictionary<string, MUserEndpoint> onlineUsers;
-        public static int ReadMessageCount = 20;
+        public static int ReadMessageCount = 10;//TODO increse this and send the mesage in more than one message to client
 
         static void Main(string[] args) {
-            onlineUsers = new ConcurrentDictionary<string, MUserEndpoint>();
-            // Data buffer for incoming data.
-
-            // Establish the local endpoint for the socket.  
-            // Dns.GetHostName returns the name of the
-            // host running the application.  
+            onlineUsers = new ConcurrentDictionary<string, MUserEndpoint>();  
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             foreach(IPAddress add in ipHostInfo.AddressList) {
                 Console.WriteLine(add);
             }
             IPAddress ipAddress = ipHostInfo.AddressList[0];
             IPEndPoint localEndPoint = new IPEndPoint(IP, PORT);
-
-            // Create a TCP/IP socket.  
+  
             Socket listener = new Socket(IP.AddressFamily,
                 SocketType.Stream, ProtocolType.Tcp);
 
-            // Bind the socket to the local endpoint and
-            // listen for incoming connections.  
             try {
                 listener.Bind(localEndPoint);
                 listener.Listen(10);
 
-                // Start listening for connections.  
                 while (true) {
                     Console.WriteLine("Waiting for a connection...");
-                    // Program is suspended while waiting for an incoming connection.  
                     Socket initSocket = listener.Accept();
                     
                     new Thread(handler).Start(initSocket);

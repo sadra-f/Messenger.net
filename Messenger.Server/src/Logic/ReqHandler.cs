@@ -119,8 +119,10 @@ namespace Messenger.Server.src.Logic {
                 MContacts contacts = null;
                 if (DbAccess.ReadContact(options["user1"], options["user2"], out contacts) == ActionResult.SUCCESS) {
                     string msgs = null;
-                    if (DbAccess.ReadContactMsg(contacts.ID, Program.ReadMessageCount, out msgs) == ActionResult.SUCCESS) {
-                        return $"Chats -Option<user1:{options["user1"]}> -Option<user2:{options["user2"]}> -Option<msgs:{msgs}>";
+                    if (contacts != null) { 
+                        if (DbAccess.ReadContactMsg(contacts.ID, Program.ReadMessageCount, out msgs) == ActionResult.SUCCESS) {
+                            return $"Chats -Option<user1:{options["user1"]}> -Option<user2:{options["user2"]}> -Option<msgs:{msgs}>";
+                        }
                     }
                 }
                 return "None Found";

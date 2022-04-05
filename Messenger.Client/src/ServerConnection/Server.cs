@@ -87,6 +87,7 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
+        //public static async Task<string> CreateGroup
 
     }
 }

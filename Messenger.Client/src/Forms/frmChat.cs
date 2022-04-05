@@ -50,8 +50,10 @@ namespace Messenger.Client.src.Forms {
         private async void frmChat_Shown(object sender, EventArgs e) {
             this.Enabled = false;
             var res = await Program.ContactChatReq(this.EndUser.Username);
-            foreach(var obj in res) {
-                this.addMessage(obj.Msg, obj.Sender == Program.user.Username);
+            if(res != null) {
+                foreach(var obj in res) {
+                    this.addMessage(obj.Msg, obj.Sender == Program.user.Username);
+                }
             }
             this.Enabled = true;
         }

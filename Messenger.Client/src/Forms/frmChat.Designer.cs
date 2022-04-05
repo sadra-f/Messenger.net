@@ -33,6 +33,7 @@ namespace Messenger.Client.src.Forms {
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnSend = new System.Windows.Forms.Button();
             this.tbMessage = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -67,6 +68,7 @@ namespace Messenger.Client.src.Forms {
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(0, 0);
@@ -77,7 +79,7 @@ namespace Messenger.Client.src.Forms {
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(74, 14);
+            this.label1.Location = new System.Drawing.Point(92, 14);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 0;
@@ -114,7 +116,9 @@ namespace Messenger.Client.src.Forms {
             // lbChat
             // 
             this.lbChat.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbChat.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
             this.lbChat.FormattingEnabled = true;
+            this.lbChat.ItemHeight = 15;
             this.lbChat.Location = new System.Drawing.Point(0, 0);
             this.lbChat.Name = "lbChat";
             this.lbChat.Size = new System.Drawing.Size(679, 356);
@@ -142,11 +146,22 @@ namespace Messenger.Client.src.Forms {
             // 
             // tbMessage
             // 
+            this.tbMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
             this.tbMessage.Location = new System.Drawing.Point(12, 14);
+            this.tbMessage.MaxLength = 90;
             this.tbMessage.Name = "tbMessage";
-            this.tbMessage.Size = new System.Drawing.Size(568, 20);
+            this.tbMessage.Size = new System.Drawing.Size(568, 21);
             this.tbMessage.TabIndex = 0;
             this.tbMessage.KeyDown += new System.Windows.Forms.KeyEventHandler(this.frmChat_KeyDown);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(12, 14);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(80, 13);
+            this.label2.TabIndex = 0;
+            this.label2.Text = "Chatting With : ";
             // 
             // frmChat
             // 
@@ -187,5 +202,6 @@ namespace Messenger.Client.src.Forms {
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.TextBox tbMessage;
         private System.Windows.Forms.ListBox lbChat;
+        private System.Windows.Forms.Label label2;
     }
 }

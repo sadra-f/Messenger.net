@@ -199,8 +199,8 @@ namespace Messenger.Server.src.Database {
         public static ActionResult CreateContact(string username1, string username2) {
             try {
                 SqlCommand cmnd = new SqlCommand($"INSERT INTO Clustering.Contacts (User1, User2) values ( " +
-                    $"(Select ID from People.Person where ID = @username1)," +
-                    $"(Select ID from People.Person where ID = @username2))");
+                    $"(Select ID from People.Person where Username = @username1)," +
+                    $"(Select ID from People.Person where Username = @username2))");
 
                 cmnd.Parameters.Add(new SqlParameter("@username1", username1));
                 cmnd.Parameters.Add(new SqlParameter("@username2", username2));

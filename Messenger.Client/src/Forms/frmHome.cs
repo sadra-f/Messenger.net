@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Messenger.Client.src.Models.DBModels.People;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,7 +19,14 @@ namespace Messenger.Client.src.Forms {
 
         private void btnNewChat_Click(object sender, EventArgs e) {
             this.Hide();
-            new frmNewContact(this).ShowDialog();
+            var tmpFrm = new frmNewContact(this);
+            Program.currentForm = tmpFrm;
+            tmpFrm.ShowDialog();
+            Program.currentForm = this;
+            if (tmpFrm.didCreateAccount) {
+                Program.currentForm = new frmChat(new MPerson(-1, tmpFrm.username, null));
+                Program.currentForm.ShowDialog();
+            }
             this.Show();
         }
 
