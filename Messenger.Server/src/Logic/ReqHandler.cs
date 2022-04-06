@@ -2,6 +2,7 @@
 using Messenger.Server.src.Database.Models.Clustering;
 using Messenger.Server.src.Database.Models.Messaging;
 using Messenger.Server.src.Database.Models.People;
+using Messenger.Server.src.Logic.ICUModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -147,6 +148,30 @@ namespace Messenger.Server.src.Logic {
             catch (Exception e) {
                 Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
                 return "None Found";
+            }
+        }
+
+        public static string Groups(string reqTxt, BigInteger reqNum) {
+            try {
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
+                List<MGroupICU> Groups = null;
+                if (DbAccess.ReadGroups(options["user"], out Groups) == ActionResult.SUCCESS) {
+                    StringBuilder strB = new StringBuilder("Groups|");
+                    if(Groups != null) {
+                        if (Groups.Count > 0) {
+                            for (int i = 0; i < Groups.Count; i++) {
+                                strB.Append(Groups[i].ToString());
+                                if (i < Groups.Count - 1) strB.Append('|');
+                            }
+                            return strB.ToString();
+                        }
+                    }
+                }
+                return "None Found -Option<reason:Failed To Read Any From Database>";
+            }
+            catch (Exception e) {
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                return $"None Found -Option<reason:{e.Message}>";
             }
         }
 

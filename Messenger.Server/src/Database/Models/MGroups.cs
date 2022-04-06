@@ -9,13 +9,16 @@ namespace Messenger.Server.src.Database.Models.Clustering {
         private int _ID;
         private string _GName;
         private string _Intro;
+        private int _CreatorID;
         private DateTime _CreatedAt;
         private DateTime _UpdatedAt;
 
         public MGroups() {
         }
 
-        public MGroups(int iD, string gName, string intro, DateTime createdAt, DateTime updatedAt) {
+
+
+        public MGroups(int iD, string gName, string intro, int CreatorID,DateTime createdAt, DateTime updatedAt) {
             ID = iD;
             GName = gName;
             Intro = intro;
@@ -28,5 +31,6 @@ namespace Messenger.Server.src.Database.Models.Clustering {
         public string Intro { get => _Intro; set => _Intro = value; }
         public DateTime CreatedAt { get => _CreatedAt; set => _CreatedAt = value; }
         public DateTime UpdatedAt { get => _UpdatedAt; set => _UpdatedAt = value; }
+        public int CreatorID { get => _CreatorID; set => _CreatorID = value; }
     }
 }

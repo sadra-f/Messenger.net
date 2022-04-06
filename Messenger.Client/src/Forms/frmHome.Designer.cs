@@ -26,15 +26,15 @@ namespace Messenger.Client.src.Forms {
         private void InitializeComponent() {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
             this.lblUsername = new System.Windows.Forms.Label();
             this.btnNewChat = new System.Windows.Forms.Button();
             this.btnChat = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.lbGroups = new System.Windows.Forms.ListBox();
-            this.lbContacts = new System.Windows.Forms.ListBox();
-            this.btnOpenGroup = new System.Windows.Forms.Button();
             this.btnNewGroup = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.btnOpenGroup = new System.Windows.Forms.Button();
+            this.lbContacts = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -75,6 +75,15 @@ namespace Messenger.Client.src.Forms {
             this.panel1.Size = new System.Drawing.Size(800, 36);
             this.panel1.TabIndex = 2;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 13);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(34, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Hello ";
+            // 
             // lblUsername
             // 
             this.lblUsername.AutoSize = true;
@@ -104,6 +113,7 @@ namespace Messenger.Client.src.Forms {
             this.btnChat.TabIndex = 3;
             this.btnChat.Text = "Open Chat";
             this.btnChat.UseVisualStyleBackColor = true;
+            this.btnChat.Click += new System.EventHandler(this.btnChat_Click);
             // 
             // panel2
             // 
@@ -128,27 +138,6 @@ namespace Messenger.Client.src.Forms {
             this.lbGroups.Size = new System.Drawing.Size(800, 180);
             this.lbGroups.TabIndex = 1;
             // 
-            // lbContacts
-            // 
-            this.lbContacts.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.lbContacts.FormattingEnabled = true;
-            this.lbContacts.ItemHeight = 16;
-            this.lbContacts.Location = new System.Drawing.Point(0, 0);
-            this.lbContacts.Name = "lbContacts";
-            this.lbContacts.Size = new System.Drawing.Size(800, 196);
-            this.lbContacts.TabIndex = 0;
-            this.lbContacts.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
-            // 
-            // btnOpenGroup
-            // 
-            this.btnOpenGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
-            this.btnOpenGroup.Location = new System.Drawing.Point(709, 203);
-            this.btnOpenGroup.Name = "btnOpenGroup";
-            this.btnOpenGroup.Size = new System.Drawing.Size(84, 23);
-            this.btnOpenGroup.TabIndex = 3;
-            this.btnOpenGroup.Text = "Open Group";
-            this.btnOpenGroup.UseVisualStyleBackColor = true;
-            // 
             // btnNewGroup
             // 
             this.btnNewGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
@@ -160,14 +149,26 @@ namespace Messenger.Client.src.Forms {
             this.btnNewGroup.UseVisualStyleBackColor = true;
             this.btnNewGroup.Click += new System.EventHandler(this.btnNewGroup_Click);
             // 
-            // label1
+            // btnOpenGroup
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(34, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Hello ";
+            this.btnOpenGroup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.btnOpenGroup.Location = new System.Drawing.Point(709, 203);
+            this.btnOpenGroup.Name = "btnOpenGroup";
+            this.btnOpenGroup.Size = new System.Drawing.Size(84, 23);
+            this.btnOpenGroup.TabIndex = 3;
+            this.btnOpenGroup.Text = "Open Group";
+            this.btnOpenGroup.UseVisualStyleBackColor = true;
+            // 
+            // lbContacts
+            // 
+            this.lbContacts.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(178)));
+            this.lbContacts.FormattingEnabled = true;
+            this.lbContacts.ItemHeight = 16;
+            this.lbContacts.Location = new System.Drawing.Point(0, 0);
+            this.lbContacts.Name = "lbContacts";
+            this.lbContacts.Size = new System.Drawing.Size(800, 196);
+            this.lbContacts.TabIndex = 0;
+            this.lbContacts.DoubleClick += new System.EventHandler(this.listBox1_DoubleClick);
             // 
             // frmHome
             // 

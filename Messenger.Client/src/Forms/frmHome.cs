@@ -37,6 +37,11 @@ namespace Messenger.Client.src.Forms {
                 foreach(var contact in Program.contacts) {
                     lbContacts.Items.Add(contact);
                 }
+                // !! if moving the add calls to another method make sure you delete the already existing ones !!
+                await Program.GroupsReq();
+                foreach (var group in Program.groups) {
+                    lbGroups.Items.Add(group.GName);
+                }
                 return;
             }
             this.lblUsername.Text = "**NOT LOGGED IN**";
@@ -58,7 +63,7 @@ namespace Messenger.Client.src.Forms {
             Program.killListener();
         }
 
-        private void listBox1_DoubleClick(object sender, EventArgs e) {
+        private void openContactChat() {
             if (lbContacts.SelectedItem == null) return;
             this.Hide();
             lbContacts.Items[lbContacts.SelectedIndex] = lbContacts.SelectedItem.ToString().Replace("*", string.Empty);
@@ -66,6 +71,10 @@ namespace Messenger.Client.src.Forms {
             Program.currentForm.ShowDialog();
             Program.currentForm = this;
             this.Show();
+        }
+
+        private void listBox1_DoubleClick(object sender, EventArgs e) {
+            openContactChat();
         }
 
         private void btnNewGroup_Click(object sender, EventArgs e) {
@@ -78,6 +87,10 @@ namespace Messenger.Client.src.Forms {
                 this.lbGroups.Items.Add(tmpFrm.name);
             }
             this.Show();
+        }
+
+        private void btnChat_Click(object sender, EventArgs e) {
+            openContactChat();
         }
     }
 }

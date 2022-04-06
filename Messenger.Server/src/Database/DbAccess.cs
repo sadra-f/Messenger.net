@@ -1,5 +1,6 @@
 ﻿using Messenger.Server.src.Database.Models.Clustering;
 using Messenger.Server.src.Database.Models.Messaging;
+using Messenger.Server.src.Logic.ICUModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -142,7 +143,9 @@ namespace Messenger.Server.src.Database {
 
         internal static ActionResult CreateGroup(string username, string name, string desc, out bool didCreate) {
             SqlCommand command = new SqlCommand($"INSERT INTO Clustering.Groups (GName, Intro,CreatorID) values (@gname, " +
-                $"@intro, (Select ID from People.Person where Username = @username))");
+                $"@intro, (Select ID from People.Person where Username = @username))" +
+                $"insert into Clustering.GroupMember (GroupID, PersonID) values ((Select ID from Clustering.Groups " +
+                $"where gName = @gname), (Select ID from People.Person where Username = @username))");
 
             command.Parameters.Add(new SqlParameter("@username", username));
             command.Parameters.Add(new SqlParameter("@gname", name));
@@ -178,6 +181,29 @@ namespace Messenger.Server.src.Database {
             catch (Exception e) {
                 //Program.WriteLog(e.Message);
                 contacts = null;
+                return ActionResult.EXCEPTION;
+            }
+        }
+
+        internal static ActionResult ReadGroups(string username, out List<MGroupICU> groups) {
+            try {
+                SqlCommand cmnd = new SqlCommand($"select GName as name, Intro, Username as creator from Clustering.Groups groups " + 
+                    $"inner join Clustering.GroupMember members on groups.ID = members.GroupID " + 
+                    $"inner join People.Person on Person.ID = groups.CreatorID " +
+                    $"where members.PersonID = (Select ID from People.Person where Username = @username)");
+
+                cmnd.Parameters.Add(new SqlParameter("@username", username));
+                groups = new List<MGroupICU>();
+                var rows = (DataTable)Execute(cmnd, QueryType.READ_ALL);
+                foreach (DataRow row in rows.Rows) {
+                    groups.Add(new MGroupICU((string)row["name"], (string)row["Intro"], (string)row["creator"]));
+                }
+                return ActionResult.SUCCESS;
+
+            }
+            catch (Exception e) {
+                //Program.WriteLog(e.Message);
+                groups = null;
                 return ActionResult.EXCEPTION;
             }
         }

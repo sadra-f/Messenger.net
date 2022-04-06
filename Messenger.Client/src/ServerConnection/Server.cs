@@ -87,6 +87,18 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
+        public async static Task<string> GroupList() {
+            string request = $"GroupsLst -Option<user:{Program.user.Username}>";
+            try {
+
+                return Encoding.UTF8.GetString((await MakeRequest(request, true)) ?? new byte[BUFFER_SIZE]);
+            }
+            catch (Exception e) {
+                Program.show(e.Message);
+                return "";
+            }
+        }
+
         public static async Task<string> CreateGroup(string name, string desc) {
             string request = $"CreateGp -Option<user:{Program.user.Username}> -Option<name:{name}> -Option<desc:{desc}>";
             try {

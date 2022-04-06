@@ -1,4 +1,5 @@
 ﻿using Messenger.Client.src.Forms;
+using Messenger.Client.src.Models;
 using Messenger.Client.src.Models.ConnectionModels;
 using Messenger.Client.src.Models.DBModels.Messaging;
 using Messenger.Client.src.Models.DBModels.People;
@@ -31,7 +32,7 @@ namespace Messenger.Client {
         public static MPerson user;
         public static bool isLoggedIn;
         public static List<string> contacts;
-        public static List<string> groups;
+        public static List<MGroupICU> groups;
 
         private static Thread listener;
 
@@ -44,7 +45,7 @@ namespace Messenger.Client {
         static void Main() {
             listen();
             contacts = new List<string>();
-            groups = new List<string>();
+            groups = new List<MGroupICU>();
             isLoggedIn = false;
             user = null;
             Application.EnableVisualStyles();
@@ -92,6 +93,19 @@ namespace Messenger.Client {
                         
         }
         
+        public async static Task GroupsReq() {
+            string resp = await Server.GroupList();
+            // check lines below
+            resp = resp.Replace("\0", String.Empty);
+            string[] splitted = resp.Split('|');
+            string res = splitted[0];
+            if (res.Trim().ToLower() == "groups") {
+                for (int i = 1; i < splitted.Length; i++) {
+                    groups.Add(new MGroupICU(splitted[i++], splitted[i++], splitted[i]));
+                }
+            }
+        }
+
         public async static Task<List<MContactChat>> ContactChatReq(string username) {
             var resp = await Server.ContactChats(username);
             Dictionary<string, string> options = ExtractOptions(resp);
@@ -113,7 +127,7 @@ namespace Messenger.Client {
             res.result = res.options["result"];
 
             if (res.result.ToLower().Trim() == "created") {
-                groups.Add(gpName);
+                groups.Add(new MGroupICU(gpName, gpDesc, user.Username));
                 res.resultType = EResultType.SUCCESS;
             }
             else if (res.result.ToLower().Trim() == "not created") {

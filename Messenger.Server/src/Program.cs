@@ -101,7 +101,8 @@ namespace Messenger.Server {
                     case "CreateGp":
                         response = ReqHandler.CreateNewGroup(reqTxt, reqNum);
                         break;
-                    case "7":
+                    case "GroupsLst":
+                        response = ReqHandler.Groups(reqTxt, reqNum);
                         break;
                     case "8":
                         break;
