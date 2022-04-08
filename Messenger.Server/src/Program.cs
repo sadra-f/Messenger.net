@@ -217,7 +217,7 @@ namespace Messenger.Server {
         public static void WriteLog(string logTxt,BigInteger reqNum ,ELogType logType = ELogType.ERROR) {
             DateTime time = DateTime.Now;
             Console.WriteLine($"[{logType}][{time}] : ReqNum ({reqNum}): {logTxt}");
-            File.AppendAllText("C:\\Users\\TOP\\Desktop\\New Text Document.txt", $"[{logType}][{time}] : ReqNum ({reqNum}): {logTxt}\r\n");
+            //File.AppendAllText("C:\\Users\\TOP\\Desktop\\New Text Document.txt", $"[{logType}][{time}] : ReqNum ({reqNum}): {logTxt}\r\n");
             //add logTxt to queue and that another thread writes
             //also attach time to it
         }

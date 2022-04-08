@@ -43,6 +43,7 @@ namespace Messenger.Client.src.Forms {
             AResponse res = await Program.LeaveGroupReq(groupName);
             if(res.resultType == EResultType.SUCCESS) {
                 MessageBox.Show(this, "Left this Group seccessfully", "success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Program.groups.Remove(groupName);
                 frmParent.doClose = true;
                 this.Close();
             }else {
