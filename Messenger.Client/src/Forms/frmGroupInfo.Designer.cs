@@ -246,6 +246,7 @@ namespace Messenger.Client.src.Forms {
             this.btnLeaveGroup.TabIndex = 4;
             this.btnLeaveGroup.Text = "Leave";
             this.btnLeaveGroup.UseVisualStyleBackColor = true;
+            this.btnLeaveGroup.Click += new System.EventHandler(this.btnLeaveGroup_Click);
             // 
             // btnCloseAndLEave
             // 

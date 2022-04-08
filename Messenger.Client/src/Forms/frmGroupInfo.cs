@@ -35,5 +35,9 @@ namespace Messenger.Client.src.Forms {
         internal void AddNewUserToList(string username) {
             lbMemebers.Items.Add(username);
         }
+
+        private void btnLeaveGroup_Click(object sender, EventArgs e) {
+            //TODO : ...
+        }
     }
 }

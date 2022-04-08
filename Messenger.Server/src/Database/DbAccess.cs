@@ -275,9 +275,10 @@ namespace Messenger.Server.src.Database {
 
         public static ActionResult ReadGroupMsg(string gName, int messageCount, out List<string> messages) {
             try {
-                SqlCommand cmnd = new SqlCommand($"Select TOP(10) Msg, Username as [user] from Messaging.GroupMsg " +
+                SqlCommand cmnd = new SqlCommand($"Select Msg, [user] from (Select TOP(10) Msg, Username as [user], GroupMsg.CreatedAt from Messaging.GroupMsg " +
                     $"inner join People.Person on Person.ID = GroupMsg.SenderID " +
-                    $"where GroupID = (Select ID from Clustering.Groups where GName = @gname)");
+                    $"where GroupID = (Select ID from Clustering.Groups where GName = @gname) " +
+                    "order by GroupMsg.CreatedAt DESC) as tbl order by CreatedAt");
 
                 cmnd.Parameters.Add(new SqlParameter("@gname", gName));
                 var rows = (DataTable)Execute(cmnd, QueryType.READ_ALL);

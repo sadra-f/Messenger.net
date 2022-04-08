@@ -148,16 +148,25 @@ namespace Messenger.Server.src.Logic {
             }
         }
 
-        public static string AddGroupMember(string reqTxt, BigInteger reqNum) {
+        public static string AddGroupMember(string reqTxt, BigInteger reqNum, out bool sendMessage, out string username, out string gName) {
             try {
                 Dictionary<string, string> options = ExtractOptions(reqTxt);
+                sendMessage = false;
+                username = "";
+                gName = "";
                 if (DbAccess.CreateGroupMember(options["gname"], options["user"]) == ActionResult.SUCCESS) {
+                    sendMessage = true;
+                    username = options["user"];
+                    gName = options["gname"];
                     return "Added";
                 }
                 return "Not Added -Option<reason:Failed To Add to DB>";
             }
             catch (Exception e) {
                 Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                sendMessage = false;
+                username = "";
+                gName = "";
                 return $"Not Added -Option<reason:{e.Message}>";
             }
         }
@@ -169,6 +178,7 @@ namespace Messenger.Server.src.Logic {
                 if (DbAccess.ReadGroupUsers(options["name"], out users) == ActionResult.SUCCESS) {
                     StringBuilder strB = new StringBuilder("USERS_LIST -Option<users:");
                     if (users == null) return "None Found";
+                    if (users.Contains("Server")) users.Remove("Server");
                     if (users.Count > 0) {
                         for (int i = 0; i < users.Count; i++) {
                             strB.Append(users[i]);

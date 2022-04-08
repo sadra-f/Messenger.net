@@ -127,9 +127,28 @@ namespace Messenger.Server {
                             }
                             break;
                         }
-                    case "AddMember":
-                        response = ReqHandler.AddGroupMember(reqTxt, reqNum);
-                        break;
+                    case "AddMember": {
+                            bool sendMessage = false;
+                            string username = "";
+                            string gName = "";
+                            response = ReqHandler.AddGroupMember(reqTxt, reqNum, out sendMessage, out username, out gName);
+                            if (sendMessage) {
+                                List<string> recivers = null;
+                                string msg = null;
+                                bool canSend = false;
+                                string FakeReqTxt = $"GM -Option<gname:{gName}> -Option<user:Server> -Option<len:{$"{username} join the chat room.".Length}> -Option<body:<{username}> join the chat room.>";
+                                ReqHandler.GroupMsg(FakeReqTxt, reqNum, out recivers, out msg, out canSend);
+                                if (canSend) {
+                                    if (msg != null)
+                                        foreach (string str in recivers) {
+                                            if (onlineUsers.Keys.Contains(str)) {
+                                                new Thread(() => SendMessage(onlineUsers[str], msg, reqNum)).Start();
+                                            }
+                                        }
+                                }
+                            }
+                            break;
+                        }
                     case "12":
                         break;
                     case "13":

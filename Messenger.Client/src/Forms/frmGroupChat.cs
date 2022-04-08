@@ -34,8 +34,9 @@ namespace Messenger.Client.src.Forms {
 
         private void btnInfo_Click(object sender, EventArgs e) {
             this.Hide();
-            Program.currentForm = new frmGroupInfo(_group.GName);
-            Program.currentForm.ShowDialog();
+            //Program.currentForm = new frmGroupInfo(_group.GName);
+            //Program.currentForm.ShowDialog();
+            new frmGroupInfo(_group.GName).ShowDialog();
             this.Show();
         }
 
