@@ -14,9 +14,9 @@ namespace Messenger.Client.src.Forms {
     public partial class frmLogin : Form {
         public frmLogin() {
             InitializeComponent();
-            this.tbUsername.Text = "sadra";
-            this.tbPassword.Text = "01234567";
-            this.btnLogin.Focus();
+            //this.tbUsername.Text = "sadra";
+            //this.tbPassword.Text = "01234567";
+            this.tbUsername.Focus();
         }
 
         private void btnCreateAccount_Click(object sender, EventArgs e) {
