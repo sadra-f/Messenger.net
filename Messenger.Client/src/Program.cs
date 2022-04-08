@@ -32,12 +32,12 @@ namespace Messenger.Client {
         public static MPerson user;
         public static bool isLoggedIn;
         public static List<string> contacts;
-        public static List<MGroupICU> groups;
+        public static Dictionary<string, MGroupICU> groups;
 
         private static Thread listener;
 
         public static IPAddress SEERVER_IP = IPAddress.Parse("192.168.1.108");
-        public static readonly  int PORT = 55000;
+        public static readonly int PORT = 55000;
         public static int messagePort = 55001;
 
 
@@ -45,7 +45,7 @@ namespace Messenger.Client {
         static void Main() {
             listen();
             contacts = new List<string>();
-            groups = new List<MGroupICU>();
+            groups = new Dictionary<string, MGroupICU>();
             isLoggedIn = false;
             user = null;
             Application.EnableVisualStyles();
@@ -67,32 +67,32 @@ namespace Messenger.Client {
             res.options = ExtractOptions(resp);
             res.result = res.options["result"];
 
-            if(res.result.ToLower().Trim() == "connected") {
+            if (res.result.ToLower().Trim() == "connected") {
                 res.resultType = EResultType.SUCCESS;
                 res.user = new MPerson(int.Parse(res.options["id"]), username, pass);
                 Program.user = new MPerson(res.user);
                 isLoggedIn = true;
             }
-            else if(res.result.ToLower().Trim() == "error") {
+            else if (res.result.ToLower().Trim() == "error") {
                 res.resultType = EResultType.FAIL;
                 res.user = null;
             }
             return res;
         }
-        
+
         public async static Task ContactsReq() {
             string resp = await Server.ContactList();
             resp = resp.Replace("\0", String.Empty);
             string[] splitted = resp.Split('|');
             string res = splitted[0];
-            if(res.Trim().ToLower() == "contacts") {
+            if (res.Trim().ToLower() == "contacts") {
                 for (int i = 1; i < splitted.Length; i++) {
                     contacts.Add(splitted[i]);
                 }
             }
-                        
+
         }
-        
+
         public async static Task GroupsReq() {
             string resp = await Server.GroupList();
             // check lines below
@@ -101,25 +101,81 @@ namespace Messenger.Client {
             string res = splitted[0];
             if (res.Trim().ToLower() == "groups") {
                 for (int i = 1; i < splitted.Length; i++) {
-                    groups.Add(new MGroupICU(splitted[i++], splitted[i++], splitted[i]));
+                    groups.Add(splitted[i], new MGroupICU(splitted[i++], splitted[i++], splitted[i]));
                 }
             }
         }
 
-        public async static Task<List<MContactChat>> ContactChatReq(string username) {
+        public async static Task<List<MChat>> GroupChatReq(string gName) {
+            var resp = await Server.GroupChat(gName);
+            Dictionary<string, string> options = ExtractOptions(resp);
+            var res = new List<MChat>();
+            if (options["result"].Trim().ToLower() == "chats") {
+                string[] splittedMsgs = options["msgs"].Split('|');
+                for (int i = 0; i < splittedMsgs.Length; i++) {
+                    res.Add(new MChat(splittedMsgs[i].Split(":".ToCharArray(), 2)[0], splittedMsgs[i].Split(":".ToCharArray(), 2)[1]));
+                }
+            }
+            return res;
+        }
+
+        public async static Task GroupUsersReq(string group) {
+            if (!groups.Keys.Contains(group)) throw new Exception("You Are Not A Member Of This Group!");
+            var resp = await Server.GroupUsers(group);
+            var options = ExtractOptions(resp);
+            if (options["result"].Trim().ToLower() == "users_list") {
+                groups[group].Users = new List<string>();
+                foreach (string str in options["users"].Split('|')) {
+                    if (str.Length < 1) continue;
+                    groups[group].Users.Add(str);
+                }
+            }
+
+        }
+
+        public async static Task<AResponse> AddGroupMemberReq(string groupName, string username) {
+            string resp = await Server.AddGroupMember(groupName, username);
+            var res = new AResponse();
+
+            res.options = ExtractOptions(resp);
+            res.result = res.options["result"];
+
+            if (res.result.ToLower().Trim() == "added") {
+                res.resultType = EResultType.SUCCESS;
+            }
+            else if (res.result.ToLower().Trim() == "not added") {
+                res.resultType = EResultType.FAIL;
+            }
+            return res;
+        }
+
+        public async static Task<List<MChat>> ContactChatReq(string username) {
             var resp = await Server.ContactChats(username);
             Dictionary<string, string> options = ExtractOptions(resp);
-            var res = new List<MContactChat>();
+            var res = new List<MChat>();
             if(resp.Split(' ')[0].Trim().ToLower() == "chats") {
                 string[] splittedMsgs = options["msgs"].Split('|');
                 for (int i = 0; i < splittedMsgs.Length; i++) {
-                    res.Add(new MContactChat(splittedMsgs[i].Split(":".ToCharArray(), 2)[0], splittedMsgs[i].Split(":".ToCharArray(), 2)[1]));
+                    res.Add(new MChat(splittedMsgs[i].Split(":".ToCharArray(), 2)[0], splittedMsgs[i].Split(":".ToCharArray(), 2)[1]));
                 }
             }
             return res;    
         }
 
-        internal async static Task<AResponse> CreateGroupReq(string gpName, string gpDesc) {
+        public async static Task<AResponse> GMReq(string gName, string msg) {
+            string resp = await Server.GroupMsg(gName, msg);
+            var res = new AResponse();
+            res.options = ExtractOptions(resp);
+            res.result = res.options["result"].Trim();
+            res.resultType = EResultType.FAIL;
+            
+            if(res.result.ToLower() == "sent") {
+                res.resultType = EResultType.SUCCESS;
+            }
+            return res;
+        }
+
+        public async static Task<AResponse> CreateGroupReq(string gpName, string gpDesc) {
             string resp = await Server.CreateGroup(gpName, gpDesc);
             var res = new AResponse();
 
@@ -127,7 +183,7 @@ namespace Messenger.Client {
             res.result = res.options["result"];
 
             if (res.result.ToLower().Trim() == "created") {
-                groups.Add(new MGroupICU(gpName, gpDesc, user.Username));
+                groups.Add(gpName, new MGroupICU(gpName, gpDesc, user.Username));
                 res.resultType = EResultType.SUCCESS;
             }
             else if (res.result.ToLower().Trim() == "not created") {
@@ -203,41 +259,67 @@ namespace Messenger.Client {
                 }
                 //MessageBox.Show($"listening on port:({messagePort})");
             }
-                //Console.WriteLine("Waiting for a connection...");
-                // Program is suspended while waiting for an incoming connection.  
-            while (true) {
+            //Console.WriteLine("Waiting for a connection...");
+            // Program is suspended while waiting for an incoming connection.
+            bool doLoop = true;
+            while (doLoop) {
                 Socket initSocket = listener.Accept();
                 try {
                     byte[] bytes = new byte[1024];
                     int bytesRec = initSocket.Receive(bytes);
                     //string reqTxt = Encoding.UTF8.GetString(bytes).Replace("\0", string.Empty);
-                    string[] splitted = Encoding.UTF8.GetString(bytes).Split('\0');
-                    if (splitted[0] == "KILLYOURSELF") return;
-                    if (splitted[2] != user.Username) continue;
-                    if (currentForm is frmChat) {
-                        if (((frmChat)currentForm).EndUser.Username == splitted[1]) {
-                            ((frmChat)currentForm).Invoke((MethodInvoker)delegate () {
-                                ((frmChat)currentForm).addMessage(splitted[4]);
-                            });
-                        }
-                        continue;
-                    }
-                    else if (currentForm is frmHome) {
-                        ((frmHome)currentForm).Invoke((MethodInvoker)delegate () {
-                            ((frmHome)currentForm).NewMessage(splitted[1], splitted[4].Replace("\0", string.Empty));
-                        });
+                    //string[] splitted = Encoding.UTF8.GetString(bytes).Split('\0');
+                    Dictionary<string, string> options = ExtractOptions(Encoding.UTF8.GetString(bytes));
+                    switch (options["result"].Trim().ToLower()) {
+                        case "killyourself": {
+                                initSocket.Shutdown(SocketShutdown.Both);
+                                initSocket.Close();
+                                doLoop = false;
+                                break;
+                            }
+                        case "pm": {
+                                if (options["to"] != user.Username) continue;
+                                if (currentForm is frmChat) {
+                                    if (((frmChat)currentForm).EndUser.Username == options["from"]) {
+                                        ((frmChat)currentForm).Invoke((MethodInvoker)delegate () {
+                                            ((frmChat)currentForm).addMessage(options["body"]);
+                                        });
+                                    }
+                                    continue;
+                                }
+                                else if (currentForm is frmHome) {
+                                    ((frmHome)currentForm).Invoke((MethodInvoker)delegate () {
+                                        ((frmHome)currentForm).NewPrivateMessage(options["from"], options["body"].Replace("\0", string.Empty));
+                                    });
+                                }
+                                break;
+                            }
+                        case "gm": {
+                                if (currentForm is frmGroupChat) {
+                                    currentForm.Invoke((MethodInvoker)delegate () {
+                                        ((frmGroupChat)currentForm).addMessage(options["body"], options["from"], options["gname"]);
+                                    });
+                                }else if (currentForm is frmHome) {
+                                    ((frmHome)currentForm).Invoke((MethodInvoker)delegate () {
+                                        ((frmHome)currentForm).NewGroupMessage(options["body"], options["from"], options["gname"]);
+                                    });
+                                }
+
+                                break;
+                            }
                     }
                 }
                 catch (Exception e) {
                     MessageBox.Show(e.Message);
                     break;
                 }
-                initSocket.Shutdown(SocketShutdown.Both);
-                initSocket.Close();
-                initSocket = null;
+                //if(initSocket != null) {
+                //    initSocket.Shutdown(SocketShutdown.Both);
+                //    initSocket.Close();
+                //}
+                
             }
             listener.Close();
-            
         }
 
         public static Dictionary<string, string> ExtractOptions(string response) {

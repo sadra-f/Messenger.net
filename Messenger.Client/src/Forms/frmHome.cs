@@ -39,7 +39,7 @@ namespace Messenger.Client.src.Forms {
                 }
                 // !! if moving the add calls to another method make sure you delete the already existing ones !!
                 await Program.GroupsReq();
-                foreach (var group in Program.groups) {
+                foreach (var group in Program.groups.Values) {
                     lbGroups.Items.Add(group.GName);
                 }
                 return;
@@ -48,7 +48,7 @@ namespace Messenger.Client.src.Forms {
         }
 
 
-        internal void NewMessage(string from, string msg) {
+        internal void NewPrivateMessage(string from, string msg) {
             if (lbContacts.Items.Contains(from)) {
                 lbContacts.Items[lbContacts.Items.IndexOf(from)] = lbContacts.Items[lbContacts.Items.IndexOf(from)].ToString() + '*';
             }
@@ -67,7 +67,8 @@ namespace Messenger.Client.src.Forms {
             if (lbContacts.SelectedItem == null) return;
             this.Hide();
             lbContacts.Items[lbContacts.SelectedIndex] = lbContacts.SelectedItem.ToString().Replace("*", string.Empty);
-            Program.currentForm = new frmChat(new Models.DBModels.People.MPerson(-1, lbContacts.SelectedItem.ToString().Replace("*", string.Empty), ""));
+            Program.currentForm = new frmChat(new MPerson(-1, lbContacts.SelectedItem.ToString().
+                Replace("*", string.Empty), ""));
             Program.currentForm.ShowDialog();
             Program.currentForm = this;
             this.Show();
@@ -86,11 +87,41 @@ namespace Messenger.Client.src.Forms {
             if (tmpFrm.didCreate) {
                 this.lbGroups.Items.Add(tmpFrm.name);
             }
+            else {
+                MessageBox.Show(this, "Group was Not Created", "Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
             this.Show();
         }
 
         private void btnChat_Click(object sender, EventArgs e) {
             openContactChat();
+        }
+
+        private void btnOpenGroup_Click(object sender, EventArgs e) {
+            if (lbGroups.SelectedItem == null) return;
+            this.Hide();
+            //lbContacts.Items[lbContacts.SelectedIndex] = lbContacts.SelectedItem.ToString().Replace("*", string.Empty);
+            Program.currentForm = new frmGroupChat(lbGroups.SelectedItem.ToString());
+            Program.currentForm.ShowDialog();
+            Program.currentForm = this;
+            this.Show();
+        }
+
+        public void NewGroupMessage(string msg, string sender, string gname) {
+            if (this.lbGroups.Items.Contains(gname)) {
+                lbGroups.Items[lbGroups.Items.IndexOf(gname)] = gname + '*';
+            }
+
+        }
+
+        private void lbGroups_DoubleClick(object sender, EventArgs e) {
+            if (lbGroups.SelectedItem == null) return;
+            this.Hide();
+            lbGroups.Items[lbGroups.SelectedIndex] = lbGroups.SelectedItem.ToString().Replace("*", string.Empty);
+            Program.currentForm = new frmGroupChat(lbGroups.SelectedItem.ToString());
+            Program.currentForm.ShowDialog();
+            Program.currentForm = this;
+            this.Show();
         }
     }
 }

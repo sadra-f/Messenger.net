@@ -53,9 +53,9 @@ namespace Messenger.Server.src.Logic {
             }
         }
 
-        public static string PrivateMessage(string req, BigInteger reqNum, out string messageReciver, out string msg) {
+        public static string PrivateMessage(string reqTxt, BigInteger reqNum, out string messageReciver, out string msg) {
             try {
-                Dictionary<string, string> options = ExtractOptions(req);
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
                 MContacts contacts = null;
                 messageReciver = null;
                 msg = null;
@@ -76,7 +76,7 @@ namespace Messenger.Server.src.Logic {
                     MContactMsg msgMdl = new MContactMsg(contacts.ID, options["body"]);
                     if(DbAccess.CreateMessage(msgMdl, options["from"]) == ActionResult.SUCCESS) {
                         messageReciver = options["to"];
-                        msg = $"Pm\0{options["from"]}\0{options["to"]}\0{options["body"].Length}\0{options["body"]}";
+                        msg = $"Pm  -Option<from:{options["from"]}> -Option<to:{options["to"]}> -Option<len:{options["body"].Length}> -Option<body:{options["body"]}>";
                         return "Sent";
                     }
                     return "not Sent";
@@ -106,6 +106,83 @@ namespace Messenger.Server.src.Logic {
             catch (Exception e) {
                 Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
                 return $"Not Created -Option<reason:{e.Message}>";
+            }
+        }
+
+        public static string GroupMsg(string reqTxt, BigInteger reqNum, out List<string> recivers, out string msg, out bool canSend) {
+            try {
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
+                recivers = null;
+                msg = null;
+                bool isMember = false;
+                canSend = false;
+                if (DbAccess.ReadGpMembership(options["gname"], options["user"], out isMember) == ActionResult.SUCCESS) {
+                    if (isMember) {
+                        canSend = true;
+                    }
+                    else {
+                        return "Not Sent -Option <reason:Credentials Failed At DB>";
+                    }
+                }
+                if (canSend) {
+                    if (DbAccess.CreateGroupMsg(options["gname"], options["user"], options["body"]) == ActionResult.SUCCESS) {
+
+                        if(DbAccess.ReadGroupUsers(options["gname"], out recivers) == ActionResult.SUCCESS) {
+                            if (recivers.Contains(options["user"])) {
+                                recivers.Remove(options["user"]);
+                            }
+                            msg = $"GM -Option<from:{options["user"]}> -Option<gname:{options["gname"]}> -Option<len:{options["body"].Length}> -Option<body:{options["body"]}>";
+                            return "Sent";
+                        }
+                    }
+                    return "not Sent -Option <reason:Failed To Send To Users>";
+                }
+                return $"Error -Option <reason:Credentials Failed At DB>";
+            }
+            catch (Exception e) {
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                recivers = null;
+                msg = null;
+                canSend = false;
+                return $"Error -Option <reason:Server Error>";
+            }
+        }
+
+        public static string AddGroupMember(string reqTxt, BigInteger reqNum) {
+            try {
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
+                if (DbAccess.CreateGroupMember(options["gname"], options["user"]) == ActionResult.SUCCESS) {
+                    return "Added";
+                }
+                return "Not Added -Option<reason:Failed To Add to DB>";
+            }
+            catch (Exception e) {
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                return $"Not Added -Option<reason:{e.Message}>";
+            }
+        }
+
+        public  static string GroupUsers(string reqTxt, BigInteger reqNum) {
+            try {
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
+                List<string> users = null;
+                if (DbAccess.ReadGroupUsers(options["name"], out users) == ActionResult.SUCCESS) {
+                    StringBuilder strB = new StringBuilder("USERS_LIST -Option<users:");
+                    if (users == null) return "None Found";
+                    if (users.Count > 0) {
+                        for (int i = 0; i < users.Count; i++) {
+                            strB.Append(users[i]);
+                            if (i < users.Count - 1) strB.Append('|');
+                        }
+                        strB.Append('>');
+                        return strB.ToString();
+                    }
+                }
+                return "None Found";
+            }
+            catch (Exception e) {
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                return "None Found";
             }
         }
 
@@ -172,6 +249,29 @@ namespace Messenger.Server.src.Logic {
             catch (Exception e) {
                 Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
                 return $"None Found -Option<reason:{e.Message}>";
+            }
+        }
+
+        public static string GroupChat(string reqTxt, BigInteger reqNum) {
+            try {
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
+                List<string> chat = null;
+                if (DbAccess.ReadGroupMsg(options["name"], Program.ReadMessageCount, out chat) == ActionResult.SUCCESS) {
+                    StringBuilder strB = new StringBuilder("chats -Option<msgs:");
+                    if (chat != null) {
+                        for (int i = 0; i < chat.Count; i++) {
+                            strB.Append(chat[i]);
+                            if (i < chat.Count - 1) strB.Append('|');
+                        }
+                        strB.Append('>');
+                        return strB.ToString();
+                    }
+                }
+                return "None Found -Option<reason:Failed To Read Any From DB>";
+            }
+            catch (Exception e) {
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                return $"None Found -Option<reason : {e.Message}>";
             }
         }
 

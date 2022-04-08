@@ -87,8 +87,57 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
+
+        public static async Task<string> GroupChat(string gName) {
+            string request = $"GroupChatLst -Option<name:{gName}>";
+            try {
+
+                return Encoding.UTF8.GetString((await MakeRequest(request, true)) ?? new byte[BUFFER_SIZE]);
+            }
+            catch (Exception e) {
+                Program.show(e.Message);
+                return "";
+            }
+        }
+
         public async static Task<string> GroupList() {
             string request = $"GroupsLst -Option<user:{Program.user.Username}>";
+            try {
+
+                return Encoding.UTF8.GetString((await MakeRequest(request, true)) ?? new byte[BUFFER_SIZE]);
+            }
+            catch (Exception e) {
+                Program.show(e.Message);
+                return "";
+            }
+        }
+
+        public async static Task<string> GroupUsers(string gName) {
+            string request = $"Users -Option<name:{gName}>";
+            try {
+
+                return Encoding.UTF8.GetString((await MakeRequest(request, true)) ?? new byte[BUFFER_SIZE]);
+            }
+            catch (Exception e) {
+                Program.show(e.Message);
+                return "";
+            }
+        }
+
+        public static async Task<string> GroupMsg(string gName, string message) {
+            string request = $"GM -Option<gname:{gName}> -Option<user:{Program.user.Username}> -Option<len:{message.Length}> -Option<body:{message}>";
+            try {
+
+                return Encoding.UTF8.GetString((await MakeRequest(request, true)) ?? new byte[BUFFER_SIZE]);
+            }
+            catch (Exception e) {
+                Program.show(e.Message);
+                return "";
+            }
+        }
+
+        public async static Task<string> AddGroupMember(string gName, string username) {
+            string request = $"AddMember -Option<gname:{gName}> -Option<user:{username}>";
             try {
 
                 return Encoding.UTF8.GetString((await MakeRequest(request, true)) ?? new byte[BUFFER_SIZE]);

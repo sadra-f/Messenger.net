@@ -5,20 +5,20 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Messenger.Client.src.Models.ConnectionModels {
-    class MContactChat {
+    class MChat {
         private string _Sender;
         private string msg;
         private DateTime _CreatedAt;
 
-        public MContactChat() {
+        public MChat() {
         }
 
-        public MContactChat(string sender, string msg) {
+        public MChat(string sender, string msg) {
             Sender = sender;
             Msg = msg;
         }
 
-        public MContactChat(string sender, string msg, DateTime createdAt) : this(sender, msg) {
+        public MChat(string sender, string msg, DateTime createdAt) : this(sender, msg) {
             CreatedAt = createdAt;
         }
 

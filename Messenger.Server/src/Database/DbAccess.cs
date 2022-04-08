@@ -141,6 +141,71 @@ namespace Messenger.Server.src.Database {
             }
         }
 
+        internal static ActionResult CreateGroupMsg(string gname, string user, string msg) {
+            SqlCommand command = new SqlCommand($"INSERT INTO Messaging.GroupMsg (GroupID, SenderID, Msg) values (" +
+                $"(Select ID from Clustering.Groups where GName = @gname)," +
+                $"(Select ID from People.Person where Username = @username)," +
+                $"(@msg)" +
+                $")");
+
+            command.Parameters.Add(new SqlParameter("@gname", gname));
+            command.Parameters.Add(new SqlParameter("@username", user));
+            command.Parameters.Add(new SqlParameter("@msg", msg));
+
+            if ((int)Execute(command, QueryType.CREATE) > 0) {
+                return ActionResult.SUCCESS;
+            }
+            return ActionResult.FAILURE;
+        }
+
+        internal static ActionResult ReadGpMembership(string gname, string user, out bool isMember) {
+            SqlCommand command = new SqlCommand($"Select GroupMember.* from Clustering.GroupMember " +
+                $"inner join People.Person on GroupMember.PersonID = Person.ID where " +
+                $"Person.Username = @username AND GroupID = (Select ID from Clustering.Groups " +
+                $"where GName = @gname)");
+
+            command.Parameters.Add(new SqlParameter("@username", user));
+            command.Parameters.Add(new SqlParameter("@gname", gname));
+
+            var res = (DataTable)Execute(command, QueryType.READ_SCALAR);
+            isMember = false;
+            if (res.Rows.Count > 0) {
+                isMember = true;
+            }
+
+            return ActionResult.SUCCESS;
+        }
+
+        public static ActionResult CreateGroupMember(string gname, string username) {
+            SqlCommand command = new SqlCommand($"INSERT into Clustering.GroupMember (GroupID, PersonID) " +
+                $"values ((Select ID from Clustering.Groups where GName = @gname)," +
+                $"(Select ID from People.Person where Username = @username))");
+
+            command.Parameters.Add(new SqlParameter("@gname", gname));
+            command.Parameters.Add(new SqlParameter("@username", username));
+            var res = (int)Execute(command, QueryType.CREATE);
+            if (res > 0) {
+                return ActionResult.SUCCESS;
+            }
+            return ActionResult.FAILURE;
+        }
+
+        internal static ActionResult ReadGroupUsers(string gName, out List<string> users) {
+            SqlCommand command = new SqlCommand($"Select Username from Clustering.GroupMember inner join " +
+                $"People.Person on GroupMember.PersonID = Person.ID where GroupMember.IsValid = 1 AND " +
+                $"GroupMember.GroupID = (Select ID from Clustering.Groups where Groups.GName = @gname)");
+
+            command.Parameters.Add(new SqlParameter("@gname", gName));
+            var res = (DataTable)Execute(command, QueryType.READ_ALL);
+            users = new List<string>();
+            if ( res.Rows.Count > 0) {
+                foreach(DataRow row in res.Rows)
+                users.Add(row["Username"].ToString());
+            }
+
+            return ActionResult.SUCCESS;
+        }
+
         internal static ActionResult CreateGroup(string username, string name, string desc, out bool didCreate) {
             SqlCommand command = new SqlCommand($"INSERT INTO Clustering.Groups (GName, Intro,CreatorID) values (@gname, " +
                 $"@intro, (Select ID from People.Person where Username = @username))" +
@@ -190,7 +255,7 @@ namespace Messenger.Server.src.Database {
                 SqlCommand cmnd = new SqlCommand($"select GName as name, Intro, Username as creator from Clustering.Groups groups " + 
                     $"inner join Clustering.GroupMember members on groups.ID = members.GroupID " + 
                     $"inner join People.Person on Person.ID = groups.CreatorID " +
-                    $"where members.PersonID = (Select ID from People.Person where Username = @username)");
+                    $"where members.PersonID = (Select ID from People.Person where Username = @username) AND members.IsValid = 1");
 
                 cmnd.Parameters.Add(new SqlParameter("@username", username));
                 groups = new List<MGroupICU>();
@@ -208,6 +273,33 @@ namespace Messenger.Server.src.Database {
             }
         }
 
+        public static ActionResult ReadGroupMsg(string gName, int messageCount, out List<string> messages) {
+            try {
+                SqlCommand cmnd = new SqlCommand($"Select TOP(10) Msg, Username as [user] from Messaging.GroupMsg " +
+                    $"inner join People.Person on Person.ID = GroupMsg.SenderID " +
+                    $"where GroupID = (Select ID from Clustering.Groups where GName = @gname)");
+
+                cmnd.Parameters.Add(new SqlParameter("@gname", gName));
+                var rows = (DataTable)Execute(cmnd, QueryType.READ_ALL);
+                StringBuilder strB = new StringBuilder();
+                messages = new List<string>();
+                for (int i = 0; i < rows.Rows.Count; i++) {
+                    strB.Append(rows.Rows[i]["user"].ToString());
+                    strB.Append(':');
+                    strB.Append(rows.Rows[i]["Msg"].ToString());
+                    messages.Add(strB.ToString());
+                    strB.Clear();
+                }
+                return ActionResult.SUCCESS;
+
+            }
+            catch (Exception e) {
+                messages = null;
+                //Program.WriteLog(e.Message);
+                return ActionResult.EXCEPTION;
+            }
+        }
+
         public static ActionResult ReadContactMsg(int contactID, int messageCount, out string messages) {
             try {
                 SqlCommand cmnd = new SqlCommand($"Select Username, Msg from (Select TOP {messageCount} Username, " +
@@ -216,7 +308,7 @@ namespace Messenger.Server.src.Database {
                     $"order by ContactMsg.CreatedAt desc) as tbl order by tbl.CreatedAt");
 
                 cmnd.Parameters.Add(new SqlParameter("@contactID", contactID));
-                var rows = (DataTable)Execute(cmnd, QueryType.READ_ALL);//TODO query is right continue the rest need double string to return the sender and msg
+                var rows = (DataTable)Execute(cmnd, QueryType.READ_ALL);
                 StringBuilder strB = new StringBuilder();
                 messages = null;
                 for (int i = 0; i < rows.Rows.Count; i++) {

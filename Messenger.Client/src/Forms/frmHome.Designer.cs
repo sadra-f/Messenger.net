@@ -137,6 +137,7 @@ namespace Messenger.Client.src.Forms {
             this.lbGroups.Name = "lbGroups";
             this.lbGroups.Size = new System.Drawing.Size(800, 180);
             this.lbGroups.TabIndex = 1;
+            this.lbGroups.DoubleClick += new System.EventHandler(this.lbGroups_DoubleClick);
             // 
             // btnNewGroup
             // 
@@ -158,6 +159,7 @@ namespace Messenger.Client.src.Forms {
             this.btnOpenGroup.TabIndex = 3;
             this.btnOpenGroup.Text = "Open Group";
             this.btnOpenGroup.UseVisualStyleBackColor = true;
+            this.btnOpenGroup.Click += new System.EventHandler(this.btnOpenGroup_Click);
             // 
             // lbContacts
             // 

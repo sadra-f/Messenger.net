@@ -52,5 +52,10 @@ namespace Messenger.Client.src.Forms {
             }
         }
 
+        private void frmLogin_FormClosed(object sender, FormClosedEventArgs e) {
+            if (!Program.isLoggedIn) {
+                Program.killListener();
+            }
+        }
     }
 }

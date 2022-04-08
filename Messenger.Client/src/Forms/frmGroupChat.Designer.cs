@@ -26,6 +26,7 @@ namespace Messenger.Client.src.Forms {
         private void InitializeComponent() {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.btnInfo = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.lblGroupName = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
@@ -34,7 +35,6 @@ namespace Messenger.Client.src.Forms {
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnSend = new System.Windows.Forms.Button();
             this.tbMessage = new System.Windows.Forms.TextBox();
-            this.button1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -69,7 +69,7 @@ namespace Messenger.Client.src.Forms {
             // 
             // panel3
             // 
-            this.panel3.Controls.Add(this.button1);
+            this.panel3.Controls.Add(this.btnInfo);
             this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.lblGroupName);
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -77,6 +77,16 @@ namespace Messenger.Client.src.Forms {
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(686, 40);
             this.panel3.TabIndex = 0;
+            // 
+            // btnInfo
+            // 
+            this.btnInfo.Location = new System.Drawing.Point(599, 9);
+            this.btnInfo.Name = "btnInfo";
+            this.btnInfo.Size = new System.Drawing.Size(75, 23);
+            this.btnInfo.TabIndex = 1;
+            this.btnInfo.Text = "Info";
+            this.btnInfo.UseVisualStyleBackColor = true;
+            this.btnInfo.Click += new System.EventHandler(this.btnInfo_Click);
             // 
             // label2
             // 
@@ -153,6 +163,7 @@ namespace Messenger.Client.src.Forms {
             this.btnSend.TabIndex = 1;
             this.btnSend.Text = "Send";
             this.btnSend.UseVisualStyleBackColor = true;
+            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
             // tbMessage
             // 
@@ -163,15 +174,6 @@ namespace Messenger.Client.src.Forms {
             this.tbMessage.Size = new System.Drawing.Size(568, 21);
             this.tbMessage.TabIndex = 0;
             // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(599, 9);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            // 
             // frmGroupChat
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -180,6 +182,7 @@ namespace Messenger.Client.src.Forms {
             this.Controls.Add(this.splitContainer1);
             this.Name = "frmGroupChat";
             this.Text = "frmGroupChat";
+            this.Shown += new System.EventHandler(this.frmGroupChat_Shown);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
@@ -209,6 +212,6 @@ namespace Messenger.Client.src.Forms {
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button btnSend;
         private System.Windows.Forms.TextBox tbMessage;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnInfo;
     }
 }

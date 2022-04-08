@@ -76,22 +76,24 @@ namespace Messenger.Server {
                     case "Make":
                         response = ReqHandler.Signup(reqTxt, reqNum);
                         break;
-                    case "Connect":
-                        bool addOnline = false;
-                        string onlineUser = null;
-                        int userPort = -1;
-                        response = ReqHandler.Login(reqTxt, reqNum, out addOnline, out onlineUser, out userPort);
-                        if (addOnline) onlineUsers.TryAdd(onlineUser, new MUserEndpoint((IPEndPoint)respSocket.RemoteEndPoint, userPort));
-                        break;
-                    case "Pm":
-                        string reciverUsername = null;
-                        string msg = null;
-                    
-                        response = ReqHandler.PrivateMessage(reqTxt, reqNum, out reciverUsername, out msg);
-                        if (onlineUsers.Keys.Contains(reciverUsername)) {
-                            SendMessage(onlineUsers[reciverUsername], msg, reqNum);
+                    case "Connect": {
+                            bool addOnline = false;
+                            string onlineUser = null;
+                            int userPort = -1;
+                            response = ReqHandler.Login(reqTxt, reqNum, out addOnline, out onlineUser, out userPort);
+                            if (addOnline) onlineUsers.TryAdd(onlineUser, new MUserEndpoint((IPEndPoint)respSocket.RemoteEndPoint, userPort));
+                            break;
                         }
-                        break;
+                    case "Pm": {
+                            string reciverUsername = null;
+                            string msg = null;
+
+                            response = ReqHandler.PrivateMessage(reqTxt, reqNum, out reciverUsername, out msg);
+                            if (onlineUsers.Keys.Contains(reciverUsername)) {
+                                SendMessage(onlineUsers[reciverUsername], msg, reqNum);
+                            }
+                            break;
+                        }
                     case "Contacts":
                         response = ReqHandler.Contacts(reqTxt, reqNum);
                         break;
@@ -104,7 +106,33 @@ namespace Messenger.Server {
                     case "GroupsLst":
                         response = ReqHandler.Groups(reqTxt, reqNum);
                         break;
-                    case "8":
+                    case "GroupChatLst":
+                        response = ReqHandler.GroupChat(reqTxt, reqNum);
+                        break;
+                    case "Users":
+                        response = ReqHandler.GroupUsers(reqTxt, reqNum);
+                        break;
+                    case "GM": {
+                            List<string> recivers = null;
+                            string msg = null;
+                            bool canSend = false;
+                            response = ReqHandler.GroupMsg(reqTxt, reqNum, out recivers, out msg, out canSend);
+                            if (canSend) {
+                                if(msg != null)
+                                foreach(string str in recivers) {
+                                    if (onlineUsers.Keys.Contains(str)) {
+                                        new Thread(() => SendMessage(onlineUsers[str], msg, reqNum)).Start();
+                                    }
+                                }
+                            }
+                            break;
+                        }
+                    case "AddMember":
+                        response = ReqHandler.AddGroupMember(reqTxt, reqNum);
+                        break;
+                    case "12":
+                        break;
+                    case "13":
                         break;
 
                 }

@@ -10,6 +10,7 @@ namespace Messenger.Client.src.Models {
         private string _GName;
         private string _Intro;
         private string _User;
+        private List<string> _users;
 
         public MGroupICU(string gName, string intro, string user) {
             GName = gName;
@@ -20,6 +21,7 @@ namespace Messenger.Client.src.Models {
         public string GName { get => _GName; set => _GName = value; }
         public string Intro { get => _Intro; set => _Intro = value; }
         public string User { get => _User; set => _User = value; }
+        public List<string> Users { get => _users; set => _users = value; }
 
         public override string ToString() {
             return $"{GName}|{Intro}|{User}";
