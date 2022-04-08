@@ -243,12 +243,7 @@ namespace Messenger.Client {
         public static void messageLinstener() {
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[0];
-            
 
-            // Create a TCP/IP socket.  
-
-            // Bind the socket to the local endpoint and
-            // listen for incoming connections.  
             Socket listener = null;
             while (true) {
                 try {
@@ -274,8 +269,7 @@ namespace Messenger.Client {
                 }
                 //MessageBox.Show($"listening on port:({messagePort})");
             }
-            //Console.WriteLine("Waiting for a connection...");
-            // Program is suspended while waiting for an incoming connection.
+
             bool doLoop = true;
             while (doLoop) {
                 Socket initSocket = listener.Accept();
@@ -328,10 +322,6 @@ namespace Messenger.Client {
                     MessageBox.Show(e.Message);
                     break;
                 }
-                //if(initSocket != null) {
-                //    initSocket.Shutdown(SocketShutdown.Both);
-                //    initSocket.Close();
-                //}
                 
             }
             listener.Close();

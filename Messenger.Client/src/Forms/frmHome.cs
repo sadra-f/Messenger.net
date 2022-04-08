@@ -101,9 +101,19 @@ namespace Messenger.Client.src.Forms {
             openGroup();
         }
 
-        public void NewGroupMessage(string msg, string sender, string gname) {
+        public async void NewGroupMessage(string msg, string sender, string gname) {
+
             if (this.lbGroups.Items.Contains(gname)) {
                 lbGroups.Items[lbGroups.Items.IndexOf(gname)] = gname + '*';
+            }
+            else {
+                await Program.GroupsReq();
+                foreach (var group in Program.groups.Values) {
+                    lbGroups.Items.Add(group.GName);
+                }
+                if (this.lbGroups.Items.Contains(gname)) {
+                    lbGroups.Items[lbGroups.Items.IndexOf(gname)] = gname + '*';
+                }
             }
 
         }
