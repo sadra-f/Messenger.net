@@ -12,7 +12,11 @@ using System.Windows.Forms;
 namespace Messenger.Client.src.Forms {
     public partial class frmGroupChat : Form {
         private MGroupICU _group;
-        public frmGroupChat(string gName) {
+        public bool doClose;
+        private frmHome home;
+        public frmGroupChat(string gName, frmHome home) {
+            doClose = false;
+            this.home = home;
             _group =  Program.groups[gName];
             InitializeComponent();
         }
@@ -36,7 +40,12 @@ namespace Messenger.Client.src.Forms {
             this.Hide();
             //Program.currentForm = new frmGroupInfo(_group.GName);
             //Program.currentForm.ShowDialog();
-            new frmGroupInfo(_group.GName).ShowDialog();
+            new frmGroupInfo(_group.GName, this).ShowDialog();
+            if (doClose) {
+                home.removeGroup(_group.GName);
+                this.Close();
+                return;
+            }
             this.Show();
         }
 

@@ -171,6 +171,29 @@ namespace Messenger.Server.src.Logic {
             }
         }
 
+        internal static string RemoveGroupMember(string reqTxt, BigInteger reqNum, out bool sendMessage, out string username, out string gName) {
+            try {
+                Dictionary<string, string> options = ExtractOptions(reqTxt);
+                sendMessage = false;
+                username = "";
+                gName = "";
+                if (DbAccess.DeleteGroupMember(options["gname"], options["user"]) == ActionResult.SUCCESS) {
+                    sendMessage = true;
+                    username = options["user"];
+                    gName = options["gname"];
+                    return "Removed";
+                }
+                return "Not Removed -Option<reason:Failed To Add to DB>";
+            }
+            catch (Exception e) {
+                Program.WriteLog(e.Message, reqNum, ELogType.ERROR);
+                sendMessage = false;
+                username = "";
+                gName = "";
+                return $"Not Removed -Option<reason:{e.Message}>";
+            }
+        }
+
         public  static string GroupUsers(string reqTxt, BigInteger reqNum) {
             try {
                 Dictionary<string, string> options = ExtractOptions(reqTxt);

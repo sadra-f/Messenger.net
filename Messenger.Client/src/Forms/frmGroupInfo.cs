@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Messenger.Client.src.Models.ConnectionModels;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,8 +12,10 @@ using System.Windows.Forms;
 namespace Messenger.Client.src.Forms {
     public partial class frmGroupInfo : Form {
         private string groupName;
-        public frmGroupInfo(string gName) {
+        frmGroupChat frmParent;
+        public frmGroupInfo(string gName, frmGroupChat frmPrnt) {
             groupName = gName;
+            this.frmParent = frmPrnt;
             InitializeComponent();
             this.tbGName.Text = Program.groups[groupName].GName;
             this.tbDesc.Text = Program.groups[groupName].Intro;
@@ -36,8 +39,16 @@ namespace Messenger.Client.src.Forms {
             lbMemebers.Items.Add(username);
         }
 
-        private void btnLeaveGroup_Click(object sender, EventArgs e) {
-            //TODO : ...
+        private async void btnLeaveGroup_Click(object sender, EventArgs e) {
+            AResponse res = await Program.LeaveGroupReq(groupName);
+            if(res.resultType == EResultType.SUCCESS) {
+                MessageBox.Show(this, "Left this Group seccessfully", "success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                frmParent.doClose = true;
+                this.Close();
+            }else {
+                MessageBox.Show(this, "Failed To Leave this Group seccessfully", "Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                frmParent.doClose = false;
+            }
         }
     }
 }

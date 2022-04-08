@@ -100,8 +100,13 @@ namespace Messenger.Server {
                     case "ChatList":
                         response = ReqHandler.ContactChat(reqTxt, reqNum);
                         break;
-                    case "CreateGp":
-                        response = ReqHandler.CreateNewGroup(reqTxt, reqNum);
+                    case "CreateGp": { 
+                            response = ReqHandler.CreateNewGroup(reqTxt, reqNum);
+                            bool sendMessage = false;
+                            string username = "";
+                            string gName = "";
+                            ReqHandler.AddGroupMember(reqTxt, reqNum, out sendMessage, out username, out gName);
+                        }
                         break;
                     case "GroupsLst":
                         response = ReqHandler.Groups(reqTxt, reqNum);
@@ -149,8 +154,30 @@ namespace Messenger.Server {
                             }
                             break;
                         }
-                    case "12":
-                        break;
+                    case "END": {
+                            bool sendMessage = false;
+                            string username = "";
+                            string gName = "";
+                            response = ReqHandler.RemoveGroupMember(reqTxt, reqNum, out sendMessage, out username, out gName);
+                            if (sendMessage) {
+                                List<string> recivers = null;
+                                string msg = null;
+                                bool canSend = false;
+                                string FakeReqTxt = $"GM -Option<gname:{gName}> -Option<user:Server> -Option<len:" +
+                                    $"{$"<{username}> Left the chat room.".Length}> -Option<body:<{username}> Left the chat room.>";
+
+                                ReqHandler.GroupMsg(FakeReqTxt, reqNum, out recivers, out msg, out canSend);
+                                if (canSend) {
+                                    if (msg != null)
+                                        foreach (string str in recivers) {
+                                            if (onlineUsers.Keys.Contains(str)) {
+                                                new Thread(() => SendMessage(onlineUsers[str], msg, reqNum)).Start();
+                                            }
+                                        }
+                                }
+                            }
+                            break;
+                        }
                     case "13":
                         break;
 

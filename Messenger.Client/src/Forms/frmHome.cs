@@ -98,13 +98,7 @@ namespace Messenger.Client.src.Forms {
         }
 
         private void btnOpenGroup_Click(object sender, EventArgs e) {
-            if (lbGroups.SelectedItem == null) return;
-            this.Hide();
-            //lbContacts.Items[lbContacts.SelectedIndex] = lbContacts.SelectedItem.ToString().Replace("*", string.Empty);
-            Program.currentForm = new frmGroupChat(lbGroups.SelectedItem.ToString());
-            Program.currentForm.ShowDialog();
-            Program.currentForm = this;
-            this.Show();
+            openGroup();
         }
 
         public void NewGroupMessage(string msg, string sender, string gname) {
@@ -114,14 +108,22 @@ namespace Messenger.Client.src.Forms {
 
         }
 
-        private void lbGroups_DoubleClick(object sender, EventArgs e) {
+        private void openGroup() {
             if (lbGroups.SelectedItem == null) return;
             this.Hide();
             lbGroups.Items[lbGroups.SelectedIndex] = lbGroups.SelectedItem.ToString().Replace("*", string.Empty);
-            Program.currentForm = new frmGroupChat(lbGroups.SelectedItem.ToString());
+            Program.currentForm = new frmGroupChat(lbGroups.SelectedItem.ToString(), this);
             Program.currentForm.ShowDialog();
             Program.currentForm = this;
             this.Show();
+        }
+
+        public void removeGroup(string gname) {
+            if (lbGroups.Items.Contains(gname)) lbGroups.Items.Remove(gname);
+        }
+
+        private void lbGroups_DoubleClick(object sender, EventArgs e) {
+            openGroup();
         }
     }
 }

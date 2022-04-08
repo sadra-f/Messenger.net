@@ -51,6 +51,17 @@ namespace Messenger.Client.src.ServerConnection {
             }
         }
 
+        public async static Task<string> LeaveGroup(string groupName, string username) {
+            string request = $"END -Option<gname:{groupName}> -Option<user:{Program.user.Username}>";
+            try {
+                return Encoding.UTF8.GetString((await MakeRequest(request)) ?? new byte[BUFFER_SIZE]);
+            }
+            catch (Exception e) {
+                Program.show(e.Message);
+                return "";
+            }
+        }
+
         public static async Task<string> ContactList() {
             string request = $"Contacts -Option<user:{Program.user.Username}>";
             try {

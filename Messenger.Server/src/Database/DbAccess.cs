@@ -48,6 +48,7 @@ namespace Messenger.Server.src.Database {
                         ((DataTable)res).Load(command.ExecuteReader());
                         break;
                     case QueryType.UPDATE:
+                        res = command.ExecuteNonQuery();
                         break;
                     case QueryType.DELETE:
                         break;
@@ -204,6 +205,22 @@ namespace Messenger.Server.src.Database {
             }
 
             return ActionResult.SUCCESS;
+        }
+
+        internal static ActionResult DeleteGroupMember(string gname, string username) {
+            SqlCommand command = new SqlCommand($"Update Clustering.GroupMember SET IsValid = 0 " +
+                $"where GroupID = (Select ID from Clustering.Groups where GName = @gname) " +
+                $"AND PersonID = (Select ID from People.Person where Username = @username)");
+
+            command.Parameters.Add(new SqlParameter("@gname", gname));
+            command.Parameters.Add(new SqlParameter("@username", username));
+
+            var res = (int)Execute(command, QueryType.UPDATE);
+            if (res > 0) {
+                return ActionResult.SUCCESS;
+            }
+
+            return ActionResult.FAILURE;
         }
 
         internal static ActionResult CreateGroup(string username, string name, string desc, out bool didCreate) {

@@ -54,6 +54,21 @@ namespace Messenger.Client {
             Application.Run(currentForm);
         }
 
+        public async static Task<AResponse> LeaveGroupReq(string groupName) {
+            string resp = await Server.LeaveGroup(groupName, user.Username);
+            var res = new AResponse();
+
+            res.options = ExtractOptions(resp);
+            res.result = res.options["result"];
+
+            if (res.result.ToLower().Trim() == "removed") {
+                res.resultType = EResultType.SUCCESS;
+            }
+            else if (res.result.ToLower().Trim() == "not removed") {
+                res.resultType = EResultType.FAIL;
+            }
+            return res;
+        }
 
         public static void show(string value, LogType type = LogType.ERROR) {
             MessageBox.Show(currentForm, value, type.ToString(), MessageBoxButtons.OK,
