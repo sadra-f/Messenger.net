@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace Messenger.Client.src.ServerConnection {
     static class Server {
         public static readonly IPAddress IP = IPAddress.Parse("192.168.1.108");
+        //public static readonly IPAddress IP = IPAddress.Parse("192.168.43.158");
         public static readonly int PORT = 55000;
         public static int BUFFER_SIZE = 1024;
 
@@ -97,7 +98,6 @@ namespace Messenger.Client.src.ServerConnection {
                 return "";
             }
         }
-
 
         public static async Task<string> GroupChat(string gName) {
             string request = $"GroupChatLst -Option<name:{gName}>";

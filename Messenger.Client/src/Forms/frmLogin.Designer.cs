@@ -38,6 +38,7 @@ namespace Messenger.Client.src.Forms {
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.Size = new System.Drawing.Size(242, 20);
             this.tbPassword.TabIndex = 0;
+            this.tbPassword.UseSystemPasswordChar = true;
             // 
             // btnLogin
             // 

@@ -20,6 +20,7 @@ namespace Messenger.Server {
     class Program {
         public static BigInteger ReqCounter = new BigInteger(0);
         public static IPAddress IP = IPAddress.Parse("192.168.1.108");
+        //public static IPAddress IP = IPAddress.Parse("192.168.43.158");
         public static readonly int PORT = 55000;
 
         public static ConcurrentDictionary<string, MUserEndpoint> onlineUsers;
@@ -58,6 +59,7 @@ namespace Messenger.Server {
             Console.Read();
 
         }
+
         private static void handler(object socket) {
             BigInteger reqNum = ReqCounter++;
             Socket respSocket = (Socket)socket;

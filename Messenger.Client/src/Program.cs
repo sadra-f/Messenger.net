@@ -36,7 +36,6 @@ namespace Messenger.Client {
 
         private static Thread listener;
 
-        public static IPAddress SEERVER_IP = IPAddress.Parse("192.168.1.108");
         public static readonly int PORT = 55000;
         public static int messagePort = 55001;
 
@@ -128,6 +127,7 @@ namespace Messenger.Client {
             if (options["result"].Trim().ToLower() == "chats") {
                 string[] splittedMsgs = options["msgs"].Split('|');
                 for (int i = 0; i < splittedMsgs.Length; i++) {
+                    if (splittedMsgs.Length < 2) break;
                     res.Add(new MChat(splittedMsgs[i].Split(":".ToCharArray(), 2)[0], splittedMsgs[i].Split(":".ToCharArray(), 2)[1]));
                 }
             }
@@ -171,6 +171,7 @@ namespace Messenger.Client {
             if(resp.Split(' ')[0].Trim().ToLower() == "chats") {
                 string[] splittedMsgs = options["msgs"].Split('|');
                 for (int i = 0; i < splittedMsgs.Length; i++) {
+                    if (splittedMsgs.Length < 2) break;
                     res.Add(new MChat(splittedMsgs[i].Split(":".ToCharArray(), 2)[0], splittedMsgs[i].Split(":".ToCharArray(), 2)[1]));
                 }
             }
@@ -223,6 +224,7 @@ namespace Messenger.Client {
             }
             return res;
         }
+
         public async static Task<AResponse> PMReq(string to, string message) {
             string resp = await Server.PMessage(new MPrivateMessage(to, message));
             var res = new AResponse();
@@ -239,7 +241,6 @@ namespace Messenger.Client {
             return res;
         }
 
-
         public static void messageLinstener() {
             IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
             IPAddress ipAddress = ipHostInfo.AddressList[0];
@@ -247,8 +248,8 @@ namespace Messenger.Client {
             Socket listener = null;
             while (true) {
                 try {
-                    IPEndPoint localEndPoint = new IPEndPoint(SEERVER_IP, messagePort);
-                    listener = new Socket(SEERVER_IP.AddressFamily,
+                    IPEndPoint localEndPoint = new IPEndPoint(Server.IP, messagePort);
+                    listener = new Socket(Server.IP.AddressFamily,
                         SocketType.Stream, ProtocolType.Tcp);
                     listener.Bind(localEndPoint);
                     listener.Listen(1);
@@ -342,13 +343,13 @@ namespace Messenger.Client {
             return res;
         }
 
-        //[Obsolete]
+        
         public static void killListener() {
             if (listener == null) return;
             if (listener.IsAlive) {
                 try {
                     //MessageBox.Show("killing");
-                    Socket socket = new Socket(SEERVER_IP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                    Socket socket = new Socket(Server.IP.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
                     socket.Connect(Dns.GetHostEntry(Dns.GetHostName()).AddressList[Dns.GetHostEntry(Dns.GetHostName()).AddressList.Length-1], messagePort);
 
                     socket.Send(Encoding.UTF8.GetBytes("KILLYOURSELF"));
@@ -364,6 +365,7 @@ namespace Messenger.Client {
                 return;
             }
         }
+
         public static void listen() {
             if(listener != null) {
                 if (listener.IsAlive) {
